@@ -8,6 +8,11 @@
     <!-- Main content -->
     <main class="flex-1 overflow-y-auto pb-16 md:pb-0">
       <div class="max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <!-- Quick Capture — always accessible -->
+        <div class="mb-6">
+          <QuickCapture />
+        </div>
+
         <slot />
       </div>
     </main>
