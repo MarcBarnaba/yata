@@ -57,6 +57,18 @@ export const useItemsStore = defineStore('items', () => {
     persist()
   }
 
+  function removeContextFromAll(contextId: string) {
+    let changed = false
+    items.value.forEach((item) => {
+      const idx = item.contexts.indexOf(contextId)
+      if (idx !== -1) {
+        item.contexts.splice(idx, 1)
+        changed = true
+      }
+    })
+    if (changed) persist()
+  }
+
   function setItems(newItems: Item[]) {
     items.value = newItems
     persist()
@@ -78,6 +90,7 @@ export const useItemsStore = defineStore('items', () => {
     addItem,
     updateItem,
     removeItem,
+    removeContextFromAll,
     setItems,
   }
 })
