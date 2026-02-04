@@ -1,7 +1,7 @@
 version: "6.0.0"
 project_name: "gsd"
 project_level: 2
-current_sprint: 2
+current_sprint: 3
 sprint_plan_path: "docs/sprint-plan-gsd-2026-02-03.md"
 
 sprints:
@@ -35,7 +35,7 @@ sprints:
 
   - sprint_number: 2
     start_date: "2026-02-04"
-    end_date: null
+    end_date: "2026-02-04"
     capacity_points: 15
     committed_points: 13
     completed_points: 13
@@ -56,24 +56,26 @@ sprints:
         completion_date: "2026-02-04"
 
   - sprint_number: 3
-    start_date: null
-    end_date: null
+    start_date: "2026-02-04"
+    end_date: "2026-02-04"
     capacity_points: 15
     committed_points: 13
-    completed_points: 0
-    status: "not_started"
+    completed_points: 13
+    status: "completed"
     goal: "Deliver core GTD operational lists — next actions and projects"
     stories:
       - story_id: "STORY-005"
         title: "Next Actions List"
         points: 5
-        status: "not_started"
-        assigned_to: null
+        status: "completed"
+        assigned_to: "developer"
+        completion_date: "2026-02-04"
       - story_id: "STORY-006"
         title: "Projects List & Detail"
         points: 8
-        status: "not_started"
-        assigned_to: null
+        status: "completed"
+        assigned_to: "developer"
+        completion_date: "2026-02-04"
 
   - sprint_number: 4
     start_date: null
@@ -138,7 +140,7 @@ sprints:
 velocity:
   sprint_1: 11
   sprint_2: 13
-  sprint_3: null
+  sprint_3: 13
   sprint_4: null
   sprint_5: null
   sprint_6: null
