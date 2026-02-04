@@ -38,8 +38,8 @@ sprints:
     end_date: null
     capacity_points: 15
     committed_points: 13
-    completed_points: 5
-    status: "in_progress"
+    completed_points: 13
+    status: "completed"
     goal: "Complete the capture-to-clarify loop"
     stories:
       - story_id: "STORY-003"
@@ -51,8 +51,9 @@ sprints:
       - story_id: "STORY-004"
         title: "Guided Clarify Process"
         points: 8
-        status: "not_started"
-        assigned_to: null
+        status: "completed"
+        assigned_to: "developer"
+        completion_date: "2026-02-04"
 
   - sprint_number: 3
     start_date: null
@@ -136,7 +137,7 @@ sprints:
 
 velocity:
   sprint_1: 11
-  sprint_2: null
+  sprint_2: 13
   sprint_3: null
   sprint_4: null
   sprint_5: null
