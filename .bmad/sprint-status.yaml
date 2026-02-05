@@ -1,8 +1,8 @@
 version: "6.0.0"
 project_name: "gsd"
 project_level: 2
-current_sprint: 6
-sprint_plan_path: "docs/sprint-plan-gsd-2026-02-03.md"
+current_sprint: 7
+sprint_plan_path: "docs/sprint-plan-gsd-2026-02-05.md"
 
 sprints:
   - sprint_number: 1
@@ -101,11 +101,10 @@ sprints:
 
   - sprint_number: 5
     start_date: "2026-02-05"
-    end_date: null
+    end_date: "2026-02-05"
     capacity_points: 15
     committed_points: 13
     completed_points: 13
-    end_date: "2026-02-05"
     status: "completed"
     goal: "Add completion workflows and weekly review"
     stories:
@@ -144,6 +143,57 @@ sprints:
         assigned_to: "developer"
         completion_date: "2026-02-05"
 
+  - sprint_number: 7
+    start_date: "2026-02-05"
+    end_date: null
+    capacity_points: 12
+    committed_points: 11
+    completed_points: 3
+    status: "active"
+    goal: "Upgrade visual system and interaction quality"
+    stories:
+      - story_id: "STORY-014"
+        title: "Material Icons Integration"
+        points: 3
+        status: "completed"
+        assigned_to: "developer"
+        completion_date: "2026-02-05"
+      - story_id: "STORY-015"
+        title: "Improve Processing UX"
+        points: 2
+        status: "not_started"
+        assigned_to: null
+      - story_id: "STORY-016"
+        title: "Dashboard Redesign"
+        points: 3
+        status: "not_started"
+        assigned_to: null
+      - story_id: "STORY-017"
+        title: "Keyboard Shortcuts Layer"
+        points: 3
+        status: "not_started"
+        assigned_to: null
+
+  - sprint_number: 8
+    start_date: null
+    end_date: null
+    capacity_points: 12
+    committed_points: 10
+    completed_points: 0
+    status: "planned"
+    goal: "Improve navigation ergonomics and add monthly calendar view"
+    stories:
+      - story_id: "STORY-018"
+        title: "Collapsed Navigation + Mobile Capture FAB"
+        points: 5
+        status: "not_started"
+        assigned_to: null
+      - story_id: "STORY-019"
+        title: "Calendar Monthly View"
+        points: 5
+        status: "not_started"
+        assigned_to: null
+
 velocity:
   sprint_1: 11
   sprint_2: 13
@@ -151,9 +201,11 @@ velocity:
   sprint_4: 10
   sprint_5: 13
   sprint_6: 10
-  rolling_average: null
+  sprint_7: null
+  sprint_8: null
+  rolling_average: 11.7
 
 team:
   size: 1
   sprint_length_weeks: 1
-  capacity_per_sprint: 15
+  capacity_per_sprint: 12
