@@ -148,6 +148,28 @@
       </p>
     </section>
 
+    <!-- Keyboard Shortcuts -->
+    <section class="mt-8">
+      <h2 class="text-lg font-semibold text-gray-800">Keyboard Shortcuts</h2>
+      <p class="mt-1 text-sm text-gray-500">Quick access to common actions without using the mouse.</p>
+
+      <div class="mt-4 space-y-4">
+        <div v-for="category in shortcutCategories" :key="category">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">{{ category }}</h3>
+          <ul class="divide-y divide-gray-100 rounded-lg border border-gray-200">
+            <li
+              v-for="shortcut in shortcutsByCategory(category)"
+              :key="shortcut.key"
+              class="flex items-center justify-between px-3 py-2"
+            >
+              <span class="text-sm text-gray-700">{{ shortcut.description }}</span>
+              <kbd class="rounded bg-gray-100 px-2 py-1 text-xs font-mono text-gray-600">{{ shortcut.key }}</kbd>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <!-- Export / Import -->
     <section class="mt-8">
       <h2 class="text-lg font-semibold text-gray-800">Data</h2>
@@ -293,6 +315,7 @@
 
 <script setup lang="ts">
 import type { Context, Tag, ExportData } from '~/types'
+import { KEYBOARD_SHORTCUTS } from '~/composables/useKeyboardShortcuts'
 
 const contextsStore = useContextsStore()
 const tagsStore = useTagsStore()
@@ -514,5 +537,15 @@ function formatDate(dateStr: string): string {
     hour: 'numeric',
     minute: '2-digit',
   })
+}
+
+// --- Keyboard shortcuts ---
+const shortcutCategories = computed(() => {
+  const categories = new Set(KEYBOARD_SHORTCUTS.map((s) => s.category))
+  return Array.from(categories)
+})
+
+function shortcutsByCategory(category: string) {
+  return KEYBOARD_SHORTCUTS.filter((s) => s.category === category)
 }
 </script>

@@ -10,7 +10,7 @@
       <div class="max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         <!-- Quick Capture — always accessible -->
         <div class="mb-6">
-          <QuickCapture />
+          <QuickCapture ref="quickCaptureRef" />
         </div>
 
         <slot />
@@ -44,11 +44,23 @@
 </template>
 
 <script setup lang="ts">
+import { useKeyboardShortcuts } from '~/composables/useKeyboardShortcuts'
+
 const mobileMenuOpen = ref(false)
 const route = useRoute()
 
 watch(() => route.path, () => {
   mobileMenuOpen.value = false
+})
+
+// Reference to QuickCapture component
+const quickCaptureRef = ref<{ focus: () => void } | null>(null)
+
+// Register global keyboard shortcuts
+useKeyboardShortcuts({
+  onCapture: () => {
+    quickCaptureRef.value?.focus()
+  },
 })
 </script>
 

@@ -5,7 +5,7 @@
         ref="titleInput"
         v-model="title"
         type="text"
-        placeholder="Capture something..."
+        :placeholder="placeholder"
         class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         @keydown.meta.enter="capture"
         @keydown.ctrl.enter="capture"
@@ -38,12 +38,26 @@
 </template>
 
 <script setup lang="ts">
+import { isMac } from '~/composables/useKeyboardShortcuts'
+
 const itemsStore = useItemsStore()
 
 const title = ref('')
 const notes = ref('')
 const showNotes = ref(false)
 const titleInput = ref<HTMLInputElement | null>(null)
+
+// Expose focus method for keyboard shortcuts
+function focus() {
+  titleInput.value?.focus()
+}
+defineExpose({ focus })
+
+// Placeholder with shortcut hint
+const placeholder = computed(() => {
+  const shortcut = isMac() ? '⌘K' : 'Ctrl+K'
+  return `Capture something... (${shortcut})`
+})
 
 function capture() {
   const trimmed = title.value.trim()
