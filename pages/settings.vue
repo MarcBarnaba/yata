@@ -75,6 +75,86 @@
       </p>
     </section>
 
+    <!-- Export / Import -->
+    <section class="mt-8">
+      <h2 class="text-lg font-semibold text-gray-800">Data</h2>
+      <p class="mt-1 text-sm text-gray-500">Export and import your GSD data as JSON for backup and restore.</p>
+
+      <div class="mt-4 flex flex-wrap gap-3">
+        <button
+          class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          @click="exportData"
+        >
+          Export Data
+        </button>
+
+        <label class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors">
+          Import Data
+          <input
+            ref="fileInput"
+            type="file"
+            accept=".json"
+            class="hidden"
+            @change="handleFileSelect"
+          />
+        </label>
+      </div>
+
+      <p v-if="importMessage" class="mt-3 text-sm" :class="importError ? 'text-red-600' : 'text-green-600'">
+        {{ importMessage }}
+      </p>
+    </section>
+
+    <!-- Import confirmation dialog -->
+    <Teleport to="body">
+      <div
+        v-if="pendingImport"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+        @click.self="cancelImport"
+      >
+        <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900">Import Data</h3>
+          <p class="text-sm text-gray-600">
+            This file contains {{ pendingImport.items.length }} items,
+            {{ pendingImport.projects.length }} projects,
+            {{ pendingImport.contexts.length }} contexts, and
+            {{ pendingImport.reviews.length }} reviews.
+          </p>
+          <p class="text-xs text-gray-400">
+            Version: {{ pendingImport.version }} &middot; Exported: {{ formatDate(pendingImport.exportedAt) }}
+          </p>
+          <div class="space-y-2">
+            <label class="flex items-center gap-2 text-sm text-gray-700">
+              <input v-model="importMode" type="radio" value="replace" class="text-blue-600" />
+              Replace all data (destructive)
+            </label>
+            <label class="flex items-center gap-2 text-sm text-gray-700">
+              <input v-model="importMode" type="radio" value="merge" class="text-blue-600" />
+              Merge with existing data
+            </label>
+          </div>
+          <p v-if="importMode === 'replace'" class="text-xs text-red-600">
+            Warning: This will delete all existing data and replace it with the imported file.
+          </p>
+          <div class="flex justify-end gap-2">
+            <button
+              class="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+              @click="cancelImport"
+            >
+              Cancel
+            </button>
+            <button
+              class="rounded-lg px-4 py-2 text-sm font-medium text-white"
+              :class="importMode === 'replace' ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'"
+              @click="executeImport"
+            >
+              {{ importMode === 'replace' ? 'Replace All Data' : 'Merge Data' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
     <!-- Delete confirmation dialog -->
     <Teleport to="body">
       <div
@@ -108,11 +188,15 @@
 </template>
 
 <script setup lang="ts">
-import type { Context } from '~/types'
+import type { Context, ExportData } from '~/types'
 
 const contextsStore = useContextsStore()
 const itemsStore = useItemsStore()
+const projectsStore = useProjectsStore()
+const reviewsStore = useReviewsStore()
+const settingsStore = useSettingsStore()
 
+// --- Context management ---
 const newContextName = ref('')
 const editingId = ref<string | null>(null)
 const editName = ref('')
@@ -152,5 +236,127 @@ function executeDelete() {
   itemsStore.removeContextFromAll(deletingContext.value.id)
   contextsStore.removeContext(deletingContext.value.id)
   deletingContext.value = null
+}
+
+// --- Export / Import ---
+const fileInput = ref<HTMLInputElement | null>(null)
+const importMessage = ref('')
+const importError = ref(false)
+const pendingImport = ref<ExportData | null>(null)
+const importMode = ref<'replace' | 'merge'>('merge')
+
+function exportData() {
+  const data: ExportData = {
+    version: settingsStore.settings.version,
+    exportedAt: new Date().toISOString(),
+    items: itemsStore.items,
+    projects: projectsStore.projects,
+    contexts: contextsStore.contexts,
+    reviews: reviewsStore.reviews,
+    settings: settingsStore.settings,
+  }
+
+  const json = JSON.stringify(data, null, 2)
+  const blob = new Blob([json], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `gsd-export-${new Date().toISOString().slice(0, 10)}.json`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+function handleFileSelect(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+
+  importMessage.value = ''
+  importError.value = false
+
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target?.result as string)
+      const validationError = validateImport(data)
+      if (validationError) {
+        importMessage.value = validationError
+        importError.value = true
+        return
+      }
+      pendingImport.value = data as ExportData
+      importMode.value = 'merge'
+    } catch {
+      importMessage.value = 'Invalid JSON file. Please select a valid GSD export file.'
+      importError.value = true
+    }
+  }
+  reader.readAsText(file)
+
+  // Reset file input so same file can be re-selected
+  input.value = ''
+}
+
+function validateImport(data: unknown): string | null {
+  if (!data || typeof data !== 'object') return 'Invalid file format.'
+  const d = data as Record<string, unknown>
+  if (!Array.isArray(d.items)) return 'Missing or invalid "items" array.'
+  if (!Array.isArray(d.projects)) return 'Missing or invalid "projects" array.'
+  if (!Array.isArray(d.contexts)) return 'Missing or invalid "contexts" array.'
+  if (!Array.isArray(d.reviews)) return 'Missing or invalid "reviews" array.'
+  if (typeof d.version !== 'string') return 'Missing version field.'
+  return null
+}
+
+function cancelImport() {
+  pendingImport.value = null
+}
+
+function executeImport() {
+  if (!pendingImport.value) return
+  const data = pendingImport.value
+
+  if (importMode.value === 'replace') {
+    itemsStore.setItems(data.items)
+    projectsStore.setProjects(data.projects)
+    contextsStore.setContexts(data.contexts)
+    reviewsStore.setReviews(data.reviews)
+    if (data.settings) settingsStore.setSettings(data.settings)
+  } else {
+    // Merge: add items that don't already exist (by ID)
+    const existingItemIds = new Set(itemsStore.items.map((i) => i.id))
+    for (const item of data.items) {
+      if (!existingItemIds.has(item.id)) itemsStore.addItem(item)
+    }
+
+    const existingProjectIds = new Set(projectsStore.projects.map((p) => p.id))
+    for (const project of data.projects) {
+      if (!existingProjectIds.has(project.id)) projectsStore.addProject(project)
+    }
+
+    const existingContextIds = new Set(contextsStore.contexts.map((c) => c.id))
+    for (const context of data.contexts) {
+      if (!existingContextIds.has(context.id)) contextsStore.addContext(context)
+    }
+
+    const existingReviewIds = new Set(reviewsStore.reviews.map((r) => r.id))
+    for (const review of data.reviews) {
+      if (!existingReviewIds.has(review.id)) reviewsStore.addReview(review)
+    }
+  }
+
+  pendingImport.value = null
+  importMessage.value = `Data ${importMode.value === 'replace' ? 'replaced' : 'merged'} successfully.`
+  importError.value = false
+}
+
+function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
 }
 </script>
