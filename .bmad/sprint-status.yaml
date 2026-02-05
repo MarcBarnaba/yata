@@ -1,7 +1,7 @@
 version: "6.0.0"
 project_name: "gsd"
 project_level: 2
-current_sprint: 3
+current_sprint: 4
 sprint_plan_path: "docs/sprint-plan-gsd-2026-02-03.md"
 
 sprints:
@@ -78,24 +78,26 @@ sprints:
         completion_date: "2026-02-04"
 
   - sprint_number: 4
-    start_date: null
-    end_date: null
+    start_date: "2026-02-05"
+    end_date: "2026-02-05"
     capacity_points: 15
     committed_points: 10
-    completed_points: 0
-    status: "not_started"
+    completed_points: 10
+    status: "completed"
     goal: "Complete all supporting GTD lists"
     stories:
       - story_id: "STORY-007"
         title: "Waiting For, Someday/Maybe, Reference"
         points: 5
-        status: "not_started"
-        assigned_to: null
+        status: "completed"
+        assigned_to: "developer"
+        completion_date: "2026-02-05"
       - story_id: "STORY-008"
         title: "Calendar View"
         points: 5
-        status: "not_started"
-        assigned_to: null
+        status: "completed"
+        assigned_to: "developer"
+        completion_date: "2026-02-05"
 
   - sprint_number: 5
     start_date: null
@@ -141,7 +143,7 @@ velocity:
   sprint_1: 11
   sprint_2: 13
   sprint_3: 13
-  sprint_4: null
+  sprint_4: 10
   sprint_5: null
   sprint_6: null
   rolling_average: null
