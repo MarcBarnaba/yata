@@ -148,7 +148,7 @@ sprints:
     end_date: null
     capacity_points: 12
     committed_points: 11
-    completed_points: 3
+    completed_points: 6
     status: "active"
     goal: "Upgrade visual system and interaction quality"
     stories:
@@ -171,8 +171,9 @@ sprints:
       - story_id: "STORY-017"
         title: "Keyboard Shortcuts Layer"
         points: 3
-        status: "not_started"
-        assigned_to: null
+        status: "completed"
+        assigned_to: "developer"
+        completion_date: "2026-02-05"
 
   - sprint_number: 8
     start_date: null
