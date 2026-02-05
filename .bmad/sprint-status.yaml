@@ -148,7 +148,7 @@ sprints:
     end_date: null
     capacity_points: 12
     committed_points: 11
-    completed_points: 6
+    completed_points: 8
     status: "active"
     goal: "Upgrade visual system and interaction quality"
     stories:
@@ -161,8 +161,9 @@ sprints:
       - story_id: "STORY-015"
         title: "Improve Processing UX"
         points: 2
-        status: "not_started"
-        assigned_to: null
+        status: "completed"
+        assigned_to: "developer"
+        completion_date: "2026-02-06"
       - story_id: "STORY-016"
         title: "Dashboard Redesign"
         points: 3

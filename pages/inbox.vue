@@ -61,17 +61,18 @@
                 {{ formatDate(item.createdAt) }}
               </p>
             </div>
-            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div class="flex items-center gap-2">
               <button
-                class="rounded px-2 py-1 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                class="rounded px-2 py-1.5 text-sm text-gray-400 hover:bg-gray-100 hover:text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity"
                 @click="startEdit(item)"
               >
                 Edit
               </button>
               <NuxtLink
                 :to="`/process/${item.id}`"
-                class="rounded px-2 py-1 text-sm font-medium text-blue-600 hover:bg-blue-50"
+                class="flex items-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-100 hover:border-blue-300 transition-colors"
               >
+                <Icon name="arrow_forward" size="sm" />
                 Process
               </NuxtLink>
             </div>
