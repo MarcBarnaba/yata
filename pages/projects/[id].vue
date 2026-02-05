@@ -251,12 +251,15 @@ function addItemToProject() {
     updatedAt: now,
     status: 'next',
     contexts: [],
+    tags: [],
     projectId: projectId.value,
     dueDate: null,
     delegatedTo: null,
     waitingForDate: null,
     completedAt: null,
     previousStatus: null,
+    duration: null,
+    energy: null,
   })
 
   newItemTitle.value = ''

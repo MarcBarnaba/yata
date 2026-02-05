@@ -58,12 +58,15 @@ function capture() {
     updatedAt: now,
     status: 'inbox',
     contexts: [],
+    tags: [],
     projectId: null,
     dueDate: null,
     delegatedTo: null,
     waitingForDate: null,
     completedAt: null,
     previousStatus: null,
+    duration: null,
+    energy: null,
   })
 
   title.value = ''

@@ -8,6 +8,10 @@ export type ItemStatus =
   | 'done'
   | 'trashed'
 
+export type Duration = '5min' | '15min' | '30min' | '1h' | '2h+'
+
+export type EnergyLevel = 'low' | 'medium' | 'high'
+
 export interface Item {
   id: string
   title: string
@@ -16,12 +20,15 @@ export interface Item {
   updatedAt: string // ISO datetime
   status: ItemStatus
   contexts: string[] // context IDs
+  tags: string[] // tag IDs
   projectId: string | null
   dueDate: string | null // ISO date
   delegatedTo: string | null
   waitingForDate: string | null // ISO date
   completedAt: string | null // ISO datetime
   previousStatus: ItemStatus | null // status before trashing, for undo
+  duration: Duration | null
+  energy: EnergyLevel | null
 }
 
 export type ProjectStatus = 'active' | 'completed' | 'trashed'
@@ -36,6 +43,11 @@ export interface Project {
 }
 
 export interface Context {
+  id: string
+  name: string
+}
+
+export interface Tag {
   id: string
   name: string
 }
@@ -65,6 +77,7 @@ export interface ExportData {
   items: Item[]
   projects: Project[]
   contexts: Context[]
+  tags: Tag[]
   reviews: WeeklyReview[]
   settings: Settings
 }

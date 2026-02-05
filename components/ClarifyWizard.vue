@@ -127,6 +127,38 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">Contexts</label>
           <ContextSelector v-model="selectedContexts" />
         </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+          <TagSelector v-model="selectedTags" />
+        </div>
+        <div class="flex gap-4">
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+            <select
+              v-model="selectedDuration"
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option :value="null">No estimate</option>
+              <option value="5min">5 minutes</option>
+              <option value="15min">15 minutes</option>
+              <option value="30min">30 minutes</option>
+              <option value="1h">1 hour</option>
+              <option value="2h+">2+ hours</option>
+            </select>
+          </div>
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Energy</label>
+            <select
+              v-model="selectedEnergy"
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option :value="null">Any energy</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
       </div>
       <div class="flex gap-2 pt-2">
         <button
@@ -173,13 +205,48 @@
       </button>
     </div>
 
-    <!-- Step: Next Action — assign contexts -->
+    <!-- Step: Next Action — assign contexts, tags, duration, energy -->
     <div v-if="step === 'nextAction'" class="space-y-4">
-      <h2 class="text-lg font-semibold text-gray-900">Assign contexts</h2>
-      <p class="text-sm text-gray-500">
-        Where or with what tools can you do this?
-      </p>
-      <ContextSelector v-model="selectedContexts" />
+      <h2 class="text-lg font-semibold text-gray-900">Configure action</h2>
+      <div class="space-y-3">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Contexts</label>
+          <p class="text-xs text-gray-400 mb-1">Where or with what tools can you do this?</p>
+          <ContextSelector v-model="selectedContexts" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+          <TagSelector v-model="selectedTags" />
+        </div>
+        <div class="flex gap-4">
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+            <select
+              v-model="selectedDuration"
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option :value="null">No estimate</option>
+              <option value="5min">5 minutes</option>
+              <option value="15min">15 minutes</option>
+              <option value="30min">30 minutes</option>
+              <option value="1h">1 hour</option>
+              <option value="2h+">2+ hours</option>
+            </select>
+          </div>
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Energy</label>
+            <select
+              v-model="selectedEnergy"
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option :value="null">Any energy</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+      </div>
       <div class="flex gap-2 pt-2">
         <button
           class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
@@ -245,6 +312,38 @@
           <label class="block text-sm font-medium text-gray-700 mb-1">Contexts</label>
           <ContextSelector v-model="selectedContexts" />
         </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+          <TagSelector v-model="selectedTags" />
+        </div>
+        <div class="flex gap-4">
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+            <select
+              v-model="selectedDuration"
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option :value="null">No estimate</option>
+              <option value="5min">5 minutes</option>
+              <option value="15min">15 minutes</option>
+              <option value="30min">30 minutes</option>
+              <option value="1h">1 hour</option>
+              <option value="2h+">2+ hours</option>
+            </select>
+          </div>
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Energy</label>
+            <select
+              v-model="selectedEnergy"
+              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option :value="null">Any energy</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
       </div>
       <div class="flex gap-2 pt-2">
         <button
@@ -273,7 +372,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Item, ItemStatus } from '~/types'
+import type { Item, ItemStatus, Duration, EnergyLevel } from '~/types'
 
 const props = defineProps<{
   item: Item
@@ -302,6 +401,9 @@ const step = ref<WizardStep>('actionable')
 
 // Form state
 const selectedContexts = ref<string[]>([...props.item.contexts])
+const selectedTags = ref<string[]>([...(props.item.tags ?? [])])
+const selectedDuration = ref<Duration | null>(props.item.duration ?? null)
+const selectedEnergy = ref<EnergyLevel | null>(props.item.energy ?? null)
 const delegatedTo = ref('')
 const waitingForDate = ref('')
 const dueDate = ref('')
@@ -355,6 +457,9 @@ function saveAsNextAction() {
   itemsStore.updateItem(props.item.id, {
     status: 'next',
     contexts: selectedContexts.value,
+    tags: selectedTags.value,
+    duration: selectedDuration.value,
+    energy: selectedEnergy.value,
   })
   emit('done')
   router.push('/inbox')
@@ -375,6 +480,9 @@ function saveAsCalendar() {
     status: 'calendar',
     dueDate: dueDate.value || null,
     contexts: selectedContexts.value,
+    tags: selectedTags.value,
+    duration: selectedDuration.value,
+    energy: selectedEnergy.value,
   })
   emit('done')
   router.push('/inbox')
@@ -400,6 +508,9 @@ function saveProject() {
     status: 'next',
     projectId,
     contexts: selectedContexts.value,
+    tags: selectedTags.value,
+    duration: selectedDuration.value,
+    energy: selectedEnergy.value,
   })
 
   emit('done')

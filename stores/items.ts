@@ -69,6 +69,19 @@ export const useItemsStore = defineStore('items', () => {
     if (changed) persist()
   }
 
+  function removeTagFromAll(tagId: string) {
+    let changed = false
+    items.value.forEach((item) => {
+      if (!item.tags) return
+      const idx = item.tags.indexOf(tagId)
+      if (idx !== -1) {
+        item.tags.splice(idx, 1)
+        changed = true
+      }
+    })
+    if (changed) persist()
+  }
+
   function trashItem(id: string) {
     const item = items.value.find((i) => i.id === id)
     if (!item) return
@@ -112,6 +125,7 @@ export const useItemsStore = defineStore('items', () => {
     trashItem,
     restoreItem,
     removeContextFromAll,
+    removeTagFromAll,
     setItems,
   }
 })

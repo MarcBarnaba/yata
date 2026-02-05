@@ -75,6 +75,79 @@
       </p>
     </section>
 
+    <!-- Tags Management -->
+    <section class="mt-8">
+      <h2 class="text-lg font-semibold text-gray-800">Tags</h2>
+      <p class="mt-1 text-sm text-gray-500">Manage tags for additional categorization of your items.</p>
+
+      <!-- Add tag -->
+      <form class="mt-4 flex gap-2" @submit.prevent="addTag">
+        <input
+          v-model="newTagName"
+          type="text"
+          placeholder="e.g. urgent"
+          class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+        <button
+          type="submit"
+          :disabled="!newTagName.trim()"
+          class="rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Add
+        </button>
+      </form>
+
+      <!-- Tag list -->
+      <ul class="mt-4 divide-y divide-gray-100">
+        <li
+          v-for="tag in tagsStore.tags"
+          :key="tag.id"
+          class="flex items-center gap-3 py-3"
+        >
+          <template v-if="editingTagId === tag.id">
+            <input
+              v-model="editTagName"
+              type="text"
+              class="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              @keyup.enter="saveTagEdit(tag.id)"
+              @keyup.escape="cancelTagEdit"
+            />
+            <button
+              class="rounded px-2 py-1 text-sm text-blue-600 hover:bg-blue-50"
+              @click="saveTagEdit(tag.id)"
+            >
+              Save
+            </button>
+            <button
+              class="rounded px-2 py-1 text-sm text-gray-500 hover:bg-gray-100"
+              @click="cancelTagEdit"
+            >
+              Cancel
+            </button>
+          </template>
+          <template v-else>
+            <span class="flex-1 text-sm text-gray-800">{{ tag.name }}</span>
+            <button
+              class="rounded px-2 py-1 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              @click="startTagEdit(tag)"
+            >
+              Edit
+            </button>
+            <button
+              class="rounded px-2 py-1 text-sm text-red-500 hover:bg-red-50 hover:text-red-700"
+              @click="confirmDeleteTag(tag)"
+            >
+              Delete
+            </button>
+          </template>
+        </li>
+      </ul>
+
+      <p v-if="tagsStore.tags.length === 0" class="mt-4 text-sm text-gray-400">
+        No tags defined.
+      </p>
+    </section>
+
     <!-- Export / Import -->
     <section class="mt-8">
       <h2 class="text-lg font-semibold text-gray-800">Data</h2>
@@ -117,7 +190,8 @@
           <p class="text-sm text-gray-600">
             This file contains {{ pendingImport.items.length }} items,
             {{ pendingImport.projects.length }} projects,
-            {{ pendingImport.contexts.length }} contexts, and
+            {{ pendingImport.contexts.length }} contexts,
+            {{ (pendingImport.tags ?? []).length }} tags, and
             {{ pendingImport.reviews.length }} reviews.
           </p>
           <p class="text-xs text-gray-400">
@@ -155,7 +229,7 @@
       </div>
     </Teleport>
 
-    <!-- Delete confirmation dialog -->
+    <!-- Delete context confirmation dialog -->
     <Teleport to="body">
       <div
         v-if="deletingContext"
@@ -184,13 +258,44 @@
         </div>
       </div>
     </Teleport>
+
+    <!-- Delete tag confirmation dialog -->
+    <Teleport to="body">
+      <div
+        v-if="deletingTag"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+        @click.self="deletingTag = null"
+      >
+        <div class="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
+          <h3 class="text-lg font-semibold text-gray-900">Delete tag?</h3>
+          <p class="mt-2 text-sm text-gray-600">
+            "{{ deletingTag.name }}" will be removed from all items. This cannot be undone.
+          </p>
+          <div class="mt-4 flex justify-end gap-2">
+            <button
+              class="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+              @click="deletingTag = null"
+            >
+              Cancel
+            </button>
+            <button
+              class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+              @click="executeDeleteTag"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Context, ExportData } from '~/types'
+import type { Context, Tag, ExportData } from '~/types'
 
 const contextsStore = useContextsStore()
+const tagsStore = useTagsStore()
 const itemsStore = useItemsStore()
 const projectsStore = useProjectsStore()
 const reviewsStore = useReviewsStore()
@@ -238,6 +343,48 @@ function executeDelete() {
   deletingContext.value = null
 }
 
+// --- Tag management ---
+const newTagName = ref('')
+const editingTagId = ref<string | null>(null)
+const editTagName = ref('')
+const deletingTag = ref<Tag | null>(null)
+
+function addTag() {
+  const name = newTagName.value.trim()
+  if (!name) return
+
+  const id = 'tag-' + crypto.randomUUID().slice(0, 8)
+  tagsStore.addTag({ id, name })
+  newTagName.value = ''
+}
+
+function startTagEdit(tag: Tag) {
+  editingTagId.value = tag.id
+  editTagName.value = tag.name
+}
+
+function saveTagEdit(id: string) {
+  const name = editTagName.value.trim()
+  if (!name) return
+  tagsStore.updateTag(id, { name })
+  editingTagId.value = null
+}
+
+function cancelTagEdit() {
+  editingTagId.value = null
+}
+
+function confirmDeleteTag(tag: Tag) {
+  deletingTag.value = tag
+}
+
+function executeDeleteTag() {
+  if (!deletingTag.value) return
+  itemsStore.removeTagFromAll(deletingTag.value.id)
+  tagsStore.removeTag(deletingTag.value.id)
+  deletingTag.value = null
+}
+
 // --- Export / Import ---
 const fileInput = ref<HTMLInputElement | null>(null)
 const importMessage = ref('')
@@ -252,6 +399,7 @@ function exportData() {
     items: itemsStore.items,
     projects: projectsStore.projects,
     contexts: contextsStore.contexts,
+    tags: tagsStore.tags,
     reviews: reviewsStore.reviews,
     settings: settingsStore.settings,
   }
@@ -320,6 +468,7 @@ function executeImport() {
     itemsStore.setItems(data.items)
     projectsStore.setProjects(data.projects)
     contextsStore.setContexts(data.contexts)
+    if (data.tags) tagsStore.setTags(data.tags)
     reviewsStore.setReviews(data.reviews)
     if (data.settings) settingsStore.setSettings(data.settings)
   } else {
@@ -337,6 +486,13 @@ function executeImport() {
     const existingContextIds = new Set(contextsStore.contexts.map((c) => c.id))
     for (const context of data.contexts) {
       if (!existingContextIds.has(context.id)) contextsStore.addContext(context)
+    }
+
+    if (data.tags) {
+      const existingTagIds = new Set(tagsStore.tags.map((t) => t.id))
+      for (const tag of data.tags) {
+        if (!existingTagIds.has(tag.id)) tagsStore.addTag(tag)
+      }
     }
 
     const existingReviewIds = new Set(reviewsStore.reviews.map((r) => r.id))
