@@ -8,46 +8,46 @@
 
     <div class="flex-1 overflow-y-auto py-2">
       <div class="px-2 space-y-0.5">
-        <NavLink to="/" icon="□" label="Dashboard" />
-        <NavLink to="/inbox" icon="↓" label="Inbox" :badge="inboxCount" />
+        <NavLink to="/" icon="dashboard" label="Dashboard" />
+        <NavLink to="/inbox" icon="inbox" label="Inbox" :badge="inboxCount" />
       </div>
 
       <div class="mt-4 px-3">
         <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Actions</span>
       </div>
       <div class="mt-1 px-2 space-y-0.5">
-        <NavLink to="/next-actions" icon="→" label="Next Actions" />
-        <NavLink to="/waiting-for" icon="⏳" label="Waiting For" />
-        <NavLink to="/calendar" icon="📅" label="Calendar" />
+        <NavLink to="/next-actions" icon="arrow_forward" label="Next Actions" />
+        <NavLink to="/waiting-for" icon="hourglass_empty" label="Waiting For" />
+        <NavLink to="/calendar" icon="calendar_month" label="Calendar" />
       </div>
 
       <div class="mt-4 px-3">
         <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Organize</span>
       </div>
       <div class="mt-1 px-2 space-y-0.5">
-        <NavLink to="/projects" icon="▸" label="Projects" />
-        <NavLink to="/someday" icon="💭" label="Someday / Maybe" />
-        <NavLink to="/reference" icon="📁" label="Reference" />
+        <NavLink to="/projects" icon="folder" label="Projects" />
+        <NavLink to="/someday" icon="lightbulb" label="Someday / Maybe" />
+        <NavLink to="/reference" icon="description" label="Reference" />
       </div>
 
       <div class="mt-4 px-3">
         <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Review</span>
       </div>
       <div class="mt-1 px-2 space-y-0.5">
-        <NavLink to="/review" icon="✓" label="Weekly Review" />
+        <NavLink to="/review" icon="checklist" label="Weekly Review" />
       </div>
 
       <div class="mt-4 px-3">
         <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Archive</span>
       </div>
       <div class="mt-1 px-2 space-y-0.5">
-        <NavLink to="/completed" icon="✓" label="Completed" />
-        <NavLink to="/trash" icon="🗑" label="Trash" :badge="trashedCount" />
+        <NavLink to="/completed" icon="check_circle" label="Completed" />
+        <NavLink to="/trash" icon="delete" label="Trash" :badge="trashedCount" />
       </div>
     </div>
 
     <div class="border-t border-gray-200 py-2 px-2">
-      <NavLink to="/settings" icon="⚙" label="Settings" />
+      <NavLink to="/settings" icon="settings" label="Settings" />
     </div>
   </nav>
 </template>

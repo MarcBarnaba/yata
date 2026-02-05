@@ -7,7 +7,7 @@
         :key="i"
         class="flex items-center gap-2"
       >
-        <span v-if="i > 0">&rarr;</span>
+        <Icon v-if="i > 0" name="chevron_right" size="sm" />
         <span :class="i === breadcrumbs.length - 1 ? 'text-gray-700 font-medium' : ''">
           {{ label }}
         </span>
@@ -63,7 +63,7 @@
         </button>
       </div>
       <button class="text-sm text-gray-500 hover:text-gray-700" @click="step = 'actionable'">
-        &larr; Back
+        <Icon name="arrow_back" size="sm" /> Back
       </button>
     </div>
 
@@ -88,7 +88,7 @@
         </button>
       </div>
       <button class="text-sm text-gray-500 hover:text-gray-700" @click="step = 'actionable'">
-        &larr; Back
+        <Icon name="arrow_back" size="sm" /> Back
       </button>
     </div>
 
@@ -169,7 +169,7 @@
           Create project
         </button>
         <button class="text-sm text-gray-500 hover:text-gray-700 px-2 py-2" @click="step = 'singleAction'">
-          &larr; Back
+          <Icon name="arrow_back" size="sm" /> Back
         </button>
       </div>
     </div>
@@ -201,7 +201,7 @@
         </button>
       </div>
       <button class="text-sm text-gray-500 hover:text-gray-700" @click="step = 'singleAction'">
-        &larr; Back
+        <Icon name="arrow_back" size="sm" /> Back
       </button>
     </div>
 
@@ -255,7 +255,7 @@
           Save as Next Action
         </button>
         <button class="text-sm text-gray-500 hover:text-gray-700 px-2 py-2" @click="step = 'configureAction'">
-          &larr; Back
+          <Icon name="arrow_back" size="sm" /> Back
         </button>
       </div>
     </div>
@@ -291,7 +291,7 @@
           Save to Waiting For
         </button>
         <button class="text-sm text-gray-500 hover:text-gray-700 px-2 py-2" @click="step = 'configureAction'">
-          &larr; Back
+          <Icon name="arrow_back" size="sm" /> Back
         </button>
       </div>
     </div>
@@ -354,7 +354,7 @@
           Save to Calendar
         </button>
         <button class="text-sm text-gray-500 hover:text-gray-700 px-2 py-2" @click="step = 'configureAction'">
-          &larr; Back
+          <Icon name="arrow_back" size="sm" /> Back
         </button>
       </div>
     </div>

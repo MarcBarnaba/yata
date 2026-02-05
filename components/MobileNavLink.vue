@@ -4,7 +4,7 @@
     class="relative flex flex-col items-center justify-center gap-0.5 min-w-[64px] min-h-[56px] px-2 py-1 transition-colors"
     :class="isActive ? 'text-blue-600' : 'text-gray-500'"
   >
-    <span class="text-lg">{{ icon }}</span>
+    <Icon :name="icon" size="lg" />
     <span class="text-[10px] font-medium">{{ label }}</span>
     <span
       v-if="badge && badge > 0"

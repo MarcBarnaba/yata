@@ -29,12 +29,12 @@
                 <p v-if="getNextAction(project.id)" class="text-xs text-gray-600">
                   <span class="text-gray-400">Next:</span> {{ getNextAction(project.id)!.title }}
                 </p>
-                <p v-else class="text-xs font-medium text-amber-700">
-                  ⚠ No next action defined
+                <p v-else class="flex items-center gap-1 text-xs font-medium text-amber-700">
+                  <Icon name="warning" size="sm" /> No next action defined
                 </p>
               </div>
             </div>
-            <span class="text-gray-400 text-sm">&rarr;</span>
+            <Icon name="chevron_right" size="sm" class="text-gray-400" />
           </div>
         </NuxtLink>
       </li>
@@ -51,10 +51,11 @@
     <!-- Completed projects -->
     <div v-if="projectsStore.completed.length" class="mt-8">
       <button
-        class="text-sm font-medium text-gray-500 hover:text-gray-700"
+        class="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-gray-700"
         @click="showCompleted = !showCompleted"
       >
-        {{ showCompleted ? '▾' : '▸' }} Completed ({{ projectsStore.completed.length }})
+        <Icon :name="showCompleted ? 'expand_more' : 'chevron_right'" size="sm" />
+        Completed ({{ projectsStore.completed.length }})
       </button>
       <ul v-if="showCompleted" class="mt-2 space-y-2">
         <li v-for="project in projectsStore.completed" :key="project.id">

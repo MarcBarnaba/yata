@@ -10,10 +10,10 @@
     <!-- Week navigation -->
     <div v-if="allCalendarItems.length" class="mt-4 flex items-center gap-3">
       <button
-        class="rounded px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 transition-colors"
+        class="flex items-center gap-1 rounded px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 transition-colors"
         @click="shiftWeek(-1)"
       >
-        &larr; Prev
+        <Icon name="arrow_back" size="sm" /> Prev
       </button>
       <button
         class="rounded px-3 py-1 text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
@@ -22,10 +22,10 @@
         Today
       </button>
       <button
-        class="rounded px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 transition-colors"
+        class="flex items-center gap-1 rounded px-2 py-1 text-sm text-gray-600 hover:bg-gray-100 transition-colors"
         @click="shiftWeek(1)"
       >
-        Next &rarr;
+        Next <Icon name="arrow_forward" size="sm" />
       </button>
       <span class="text-sm text-gray-500">
         {{ formatWeekRange(weekStart) }}
@@ -44,7 +44,7 @@
             title="Mark as done"
             @click="markDone(item.id)"
           >
-            <span class="opacity-0 group-hover:opacity-100 text-green-600 text-xs">✓</span>
+            <Icon name="check" size="sm" class="opacity-0 group-hover:opacity-100 text-green-600" />
           </button>
           <div class="flex-1 min-w-0">
             <p class="text-sm font-medium text-gray-900">{{ item.title }}</p>
@@ -53,8 +53,9 @@
               <NuxtLink
                 v-if="item.projectId"
                 :to="`/projects/${item.projectId}`"
-                class="text-blue-600 hover:underline"
+                class="flex items-center gap-0.5 text-blue-600 hover:underline"
               >
+                <Icon name="folder" size="sm" />
                 {{ getProjectName(item.projectId) }}
               </NuxtLink>
             </div>
@@ -93,7 +94,7 @@
               title="Mark as done"
               @click="markDone(item.id)"
             >
-              <span class="opacity-0 group-hover:opacity-100 text-green-600 text-xs">✓</span>
+              <Icon name="check" size="sm" class="opacity-0 group-hover:opacity-100 text-green-600" />
             </button>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium text-gray-900">{{ item.title }}</p>
@@ -249,7 +250,7 @@ function formatWeekRange(start: Date): string {
 
 function getProjectName(projectId: string): string {
   const project = projectsStore.getById(projectId)
-  return project ? `▸ ${project.title}` : '▸ Unknown project'
+  return project ? project.title : 'Unknown project'
 }
 
 function getContextName(ctxId: string): string {

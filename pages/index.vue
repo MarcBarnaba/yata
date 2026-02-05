@@ -6,7 +6,7 @@
     <!-- System health -->
     <div class="mt-6 rounded-lg border p-4" :class="healthBorderClass">
       <div class="flex items-center gap-2">
-        <span class="text-lg">{{ healthIcon }}</span>
+        <Icon :name="healthIcon" size="md" :class="healthTextClass" />
         <span class="text-sm font-medium" :class="healthTextClass">{{ healthLabel }}</span>
       </div>
       <ul v-if="healthIssues.length" class="mt-2 space-y-1">
@@ -96,9 +96,10 @@
           v-for="link in quickLinks"
           :key="link.to"
           :to="link.to"
-          class="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+          class="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
         >
-          {{ link.icon }} {{ link.label }}
+          <Icon :name="link.icon" size="sm" />
+          {{ link.label }}
         </NuxtLink>
       </div>
     </div>
@@ -160,9 +161,9 @@ const healthLevel = computed(() => {
 })
 
 const healthIcon = computed(() => {
-  if (healthLevel.value === 'green') return '●'
-  if (healthLevel.value === 'yellow') return '●'
-  return '●'
+  if (healthLevel.value === 'green') return 'check_circle'
+  if (healthLevel.value === 'yellow') return 'warning'
+  return 'error'
 })
 
 const healthBorderClass = computed(() => {
@@ -185,15 +186,15 @@ const healthLabel = computed(() => {
 
 // Quick links
 const quickLinks = [
-  { to: '/inbox', icon: '↓', label: 'Inbox' },
-  { to: '/next-actions', icon: '→', label: 'Next Actions' },
-  { to: '/projects', icon: '▸', label: 'Projects' },
-  { to: '/waiting-for', icon: '⏳', label: 'Waiting For' },
-  { to: '/calendar', icon: '📅', label: 'Calendar' },
-  { to: '/someday', icon: '💭', label: 'Someday/Maybe' },
-  { to: '/reference', icon: '📁', label: 'Reference' },
-  { to: '/review', icon: '✓', label: 'Weekly Review' },
-  { to: '/completed', icon: '✓', label: 'Completed' },
-  { to: '/settings', icon: '⚙', label: 'Settings' },
+  { to: '/inbox', icon: 'inbox', label: 'Inbox' },
+  { to: '/next-actions', icon: 'arrow_forward', label: 'Next Actions' },
+  { to: '/projects', icon: 'folder', label: 'Projects' },
+  { to: '/waiting-for', icon: 'hourglass_empty', label: 'Waiting For' },
+  { to: '/calendar', icon: 'calendar_month', label: 'Calendar' },
+  { to: '/someday', icon: 'lightbulb', label: 'Someday/Maybe' },
+  { to: '/reference', icon: 'description', label: 'Reference' },
+  { to: '/review', icon: 'checklist', label: 'Weekly Review' },
+  { to: '/completed', icon: 'check_circle', label: 'Completed' },
+  { to: '/settings', icon: 'settings', label: 'Settings' },
 ]
 </script>

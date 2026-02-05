@@ -6,7 +6,7 @@
       ? 'bg-blue-50 text-blue-700'
       : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'"
   >
-    <span class="w-5 text-center flex-shrink-0">{{ icon }}</span>
+    <Icon :name="icon" size="md" class="flex-shrink-0" />
     <span class="flex-1">{{ label }}</span>
     <span
       v-if="badge && badge > 0"

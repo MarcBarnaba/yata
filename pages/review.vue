@@ -6,10 +6,11 @@
     <!-- Review history toggle -->
     <div v-if="reviewsStore.reviews.length && !reviewing" class="mt-4">
       <button
-        class="text-sm font-medium text-gray-500 hover:text-gray-700"
+        class="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-gray-700"
         @click="showHistory = !showHistory"
       >
-        {{ showHistory ? '▾' : '▸' }} Past Reviews ({{ reviewsStore.reviews.length }})
+        <Icon :name="showHistory ? 'expand_more' : 'chevron_right'" size="sm" />
+        Past Reviews ({{ reviewsStore.reviews.length }})
       </button>
 
       <ul v-if="showHistory" class="mt-2 space-y-2">
@@ -59,7 +60,7 @@
           :class="stepClass(i)"
           @click="goToStep(i)"
         >
-          <span v-if="stepCompleted(i)">✓</span>
+          <Icon v-if="stepCompleted(i)" name="check" size="sm" />
           <span>{{ s.short }}</span>
         </button>
       </div>
@@ -73,8 +74,8 @@
           class="rounded-lg border p-4"
           :class="inboxCount === 0 ? 'border-green-200 bg-green-50' : 'border-amber-300 bg-amber-50'"
         >
-          <p v-if="inboxCount === 0" class="text-sm font-medium text-green-700">
-            ✓ Inbox is empty — great job!
+          <p v-if="inboxCount === 0" class="flex items-center gap-1 text-sm font-medium text-green-700">
+            <Icon name="check_circle" size="sm" /> Inbox is empty — great job!
           </p>
           <div v-else>
             <p class="text-sm font-medium text-amber-700">
@@ -95,7 +96,7 @@
             :disabled="inboxCount > 0"
             @click="currentStep = 1"
           >
-            Next →
+            Next <Icon name="arrow_forward" size="sm" />
           </button>
         </div>
       </div>
@@ -109,8 +110,8 @@
           class="rounded-lg border p-4"
           :class="staleProjects.length === 0 ? 'border-green-200 bg-green-50' : 'border-amber-300 bg-amber-50'"
         >
-          <p v-if="staleProjects.length === 0" class="text-sm font-medium text-green-700">
-            ✓ All projects have next actions!
+          <p v-if="staleProjects.length === 0" class="flex items-center gap-1 text-sm font-medium text-green-700">
+            <Icon name="check_circle" size="sm" /> All projects have next actions!
           </p>
           <div v-else class="space-y-3">
             <p class="text-sm font-medium text-amber-700">
@@ -123,7 +124,7 @@
                   :to="`/projects/${project.id}`"
                   class="rounded px-2 py-1 text-xs text-blue-600 hover:bg-blue-50"
                 >
-                  Add next action →
+                  Add next action <Icon name="arrow_forward" size="sm" />
                 </NuxtLink>
               </li>
             </ul>
@@ -132,14 +133,14 @@
 
         <div class="flex justify-between">
           <button class="text-sm text-gray-500 hover:text-gray-700" @click="currentStep = 0">
-            ← Back
+            <Icon name="arrow_back" size="sm" /> Back
           </button>
           <button
             class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             :disabled="staleProjects.length > 0"
             @click="currentStep = 2"
           >
-            Next →
+            Next <Icon name="arrow_forward" size="sm" />
           </button>
         </div>
       </div>
@@ -150,7 +151,7 @@
         <p class="text-sm text-gray-500">Are these items still valid? Do you need to follow up?</p>
 
         <div v-if="waitingItems.length === 0" class="rounded-lg border border-green-200 bg-green-50 p-4">
-          <p class="text-sm font-medium text-green-700">✓ No waiting for items to review.</p>
+          <p class="flex items-center gap-1 text-sm font-medium text-green-700"><Icon name="check_circle" size="sm" /> No waiting for items to review.</p>
         </div>
 
         <ul v-else class="space-y-2">
@@ -163,7 +164,7 @@
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-900">{{ item.title }}</p>
                 <div class="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                  <span v-if="item.delegatedTo" class="text-purple-600">→ {{ item.delegatedTo }}</span>
+                  <span v-if="item.delegatedTo" class="flex items-center gap-0.5 text-purple-600"><Icon name="person" size="sm" /> {{ item.delegatedTo }}</span>
                   <span v-if="item.waitingForDate">since {{ formatDate(item.waitingForDate) }}</span>
                 </div>
               </div>
@@ -178,7 +179,7 @@
                   class="rounded px-2 py-1 text-xs text-blue-600 hover:bg-blue-50"
                   @click="convertToNextAction(item.id)"
                 >
-                  → Action
+                  <Icon name="arrow_forward" size="sm" /> Action
                 </button>
                 <button
                   class="rounded px-2 py-1 text-xs text-red-500 hover:bg-red-50"
@@ -193,13 +194,13 @@
 
         <div class="flex justify-between">
           <button class="text-sm text-gray-500 hover:text-gray-700" @click="currentStep = 1">
-            ← Back
+            <Icon name="arrow_back" size="sm" /> Back
           </button>
           <button
             class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
             @click="currentStep = 3"
           >
-            Next →
+            Next <Icon name="arrow_forward" size="sm" />
           </button>
         </div>
       </div>
@@ -210,7 +211,7 @@
         <p class="text-sm text-gray-500">Check your upcoming commitments for the next two weeks.</p>
 
         <div v-if="upcomingCalendarItems.length === 0" class="rounded-lg border border-green-200 bg-green-50 p-4">
-          <p class="text-sm font-medium text-green-700">✓ No upcoming calendar items.</p>
+          <p class="flex items-center gap-1 text-sm font-medium text-green-700"><Icon name="check_circle" size="sm" /> No upcoming calendar items.</p>
         </div>
 
         <ul v-else class="space-y-2">
@@ -239,13 +240,13 @@
 
         <div class="flex justify-between">
           <button class="text-sm text-gray-500 hover:text-gray-700" @click="currentStep = 2">
-            ← Back
+            <Icon name="arrow_back" size="sm" /> Back
           </button>
           <button
             class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
             @click="currentStep = 4"
           >
-            Next →
+            Next <Icon name="arrow_forward" size="sm" />
           </button>
         </div>
       </div>
@@ -256,7 +257,7 @@
         <p class="text-sm text-gray-500">Anything ready to promote? Anything no longer relevant?</p>
 
         <div v-if="somedayItems.length === 0" class="rounded-lg border border-green-200 bg-green-50 p-4">
-          <p class="text-sm font-medium text-green-700">✓ No someday/maybe items to review.</p>
+          <p class="flex items-center gap-1 text-sm font-medium text-green-700"><Icon name="check_circle" size="sm" /> No someday/maybe items to review.</p>
         </div>
 
         <ul v-else class="space-y-2">
@@ -275,7 +276,7 @@
                   class="rounded px-2 py-1 text-xs text-blue-600 hover:bg-blue-50"
                   @click="promoteToAction(item.id)"
                 >
-                  → Action
+                  <Icon name="arrow_forward" size="sm" /> Action
                 </button>
                 <button
                   class="rounded px-2 py-1 text-xs text-red-500 hover:bg-red-50"
@@ -290,14 +291,14 @@
 
         <div class="flex justify-between">
           <button class="text-sm text-gray-500 hover:text-gray-700" @click="currentStep = 3">
-            ← Back
+            <Icon name="arrow_back" size="sm" /> Back
           </button>
           <button
             class="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
             :disabled="!canComplete"
             @click="completeReview"
           >
-            Complete Review ✓
+            Complete Review <Icon name="check" size="sm" />
           </button>
         </div>
         <p v-if="!canComplete" class="text-xs text-amber-600">

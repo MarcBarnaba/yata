@@ -108,7 +108,7 @@
             title="Mark as done"
             @click="markDone(item.id)"
           >
-            <span class="opacity-0 group-hover:opacity-100 text-green-600 text-xs">✓</span>
+            <Icon name="check" size="sm" class="opacity-0 group-hover:opacity-100 text-green-600" />
           </button>
 
           <div class="flex-1 min-w-0">
@@ -119,8 +119,9 @@
               <NuxtLink
                 v-if="item.projectId"
                 :to="`/projects/${item.projectId}`"
-                class="text-xs text-blue-600 hover:underline"
+                class="flex items-center gap-0.5 text-xs text-blue-600 hover:underline"
               >
+                <Icon name="folder" size="sm" />
                 {{ getProjectName(item.projectId) }}
               </NuxtLink>
               <!-- Context tags -->
@@ -247,7 +248,7 @@ function markDone(id: string) {
 
 function getProjectName(projectId: string): string {
   const project = projectsStore.getById(projectId)
-  return project ? `▸ ${project.title}` : '▸ Unknown project'
+  return project ? project.title : 'Unknown project'
 }
 
 function trashItem(id: string) {
