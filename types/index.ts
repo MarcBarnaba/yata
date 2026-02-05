@@ -21,6 +21,7 @@ export interface Item {
   delegatedTo: string | null
   waitingForDate: string | null // ISO date
   completedAt: string | null // ISO datetime
+  previousStatus: ItemStatus | null // status before trashing, for undo
 }
 
 export type ProjectStatus = 'active' | 'completed' | 'trashed'

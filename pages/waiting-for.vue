@@ -48,13 +48,22 @@
           </div>
 
           <!-- Actions -->
-          <button
-            class="rounded px-2 py-1 text-xs text-blue-600 hover:bg-blue-50 transition-colors whitespace-nowrap"
-            title="Convert to next action"
-            @click="convertToNextAction(item.id)"
-          >
-            → Next Action
-          </button>
+          <div class="flex items-center gap-1 flex-shrink-0">
+            <button
+              class="rounded px-2 py-1 text-xs text-blue-600 hover:bg-blue-50 transition-colors whitespace-nowrap"
+              title="Convert to next action"
+              @click="convertToNextAction(item.id)"
+            >
+              → Next Action
+            </button>
+            <button
+              class="rounded px-2 py-1 text-xs text-red-500 hover:bg-red-50 transition-colors"
+              title="Trash"
+              @click="trashItem(item.id)"
+            >
+              Trash
+            </button>
+          </div>
         </div>
       </li>
     </ul>
@@ -79,6 +88,10 @@ function markDone(id: string) {
     status: 'done',
     completedAt: new Date().toISOString(),
   })
+}
+
+function trashItem(id: string) {
+  itemsStore.trashItem(id)
 }
 
 function convertToNextAction(id: string) {

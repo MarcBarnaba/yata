@@ -69,6 +69,25 @@ export const useItemsStore = defineStore('items', () => {
     if (changed) persist()
   }
 
+  function trashItem(id: string) {
+    const item = items.value.find((i) => i.id === id)
+    if (!item) return
+    updateItem(id, {
+      previousStatus: item.status,
+      status: 'trashed',
+    })
+  }
+
+  function restoreItem(id: string) {
+    const item = items.value.find((i) => i.id === id)
+    if (!item) return
+    const restoreTo = item.previousStatus ?? 'inbox'
+    updateItem(id, {
+      status: restoreTo,
+      previousStatus: null,
+    })
+  }
+
   function setItems(newItems: Item[]) {
     items.value = newItems
     persist()
@@ -90,6 +109,8 @@ export const useItemsStore = defineStore('items', () => {
     addItem,
     updateItem,
     removeItem,
+    trashItem,
+    restoreItem,
     removeContextFromAll,
     setItems,
   }

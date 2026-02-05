@@ -59,6 +59,13 @@
               </NuxtLink>
             </div>
           </div>
+          <button
+            class="rounded px-2 py-1 text-xs text-red-500 opacity-0 group-hover:opacity-100 hover:bg-red-50 transition-all"
+            title="Trash"
+            @click="trashItem(item.id)"
+          >
+            Trash
+          </button>
         </li>
       </ul>
     </div>
@@ -108,6 +115,13 @@
                 </span>
               </div>
             </div>
+            <button
+              class="rounded px-2 py-1 text-xs text-red-500 opacity-0 group-hover:opacity-100 hover:bg-red-50 transition-all"
+              title="Trash"
+              @click="trashItem(item.id)"
+            >
+              Trash
+            </button>
           </li>
         </ul>
       </div>
@@ -248,5 +262,9 @@ function markDone(id: string) {
     status: 'done',
     completedAt: new Date().toISOString(),
   })
+}
+
+function trashItem(id: string) {
+  itemsStore.trashItem(id)
 }
 </script>

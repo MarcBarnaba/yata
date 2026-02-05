@@ -342,7 +342,11 @@ const breadcrumbs = computed(() => {
 })
 
 function fileAs(status: ItemStatus) {
-  itemsStore.updateItem(props.item.id, { status })
+  if (status === 'trashed') {
+    itemsStore.trashItem(props.item.id)
+  } else {
+    itemsStore.updateItem(props.item.id, { status })
+  }
   emit('done')
   router.push('/inbox')
 }

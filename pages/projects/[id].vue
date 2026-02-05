@@ -256,6 +256,7 @@ function addItemToProject() {
     delegatedTo: null,
     waitingForDate: null,
     completedAt: null,
+    previousStatus: null,
   })
 
   newItemTitle.value = ''

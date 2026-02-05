@@ -71,6 +71,15 @@
               </span>
             </div>
           </div>
+
+          <!-- Trash -->
+          <button
+            class="rounded px-2 py-1 text-xs text-red-500 opacity-0 group-hover:opacity-100 hover:bg-red-50 transition-all"
+            title="Trash"
+            @click="trashItem(item.id)"
+          >
+            Trash
+          </button>
         </div>
       </li>
     </ul>
@@ -121,6 +130,10 @@ function markDone(id: string) {
 function getProjectName(projectId: string): string {
   const project = projectsStore.getById(projectId)
   return project ? `▸ ${project.title}` : '▸ Unknown project'
+}
+
+function trashItem(id: string) {
+  itemsStore.trashItem(id)
 }
 
 function getContextName(ctxId: string): string {

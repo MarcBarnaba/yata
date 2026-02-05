@@ -63,6 +63,7 @@ function capture() {
     delegatedTo: null,
     waitingForDate: null,
     completedAt: null,
+    previousStatus: null,
   })
 
   title.value = ''

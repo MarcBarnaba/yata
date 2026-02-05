@@ -148,7 +148,7 @@ function saveEdit(id: string) {
 }
 
 function trashItem(id: string) {
-  itemsStore.updateItem(id, { status: 'trashed' })
+  itemsStore.trashItem(id)
 }
 
 function getContextName(ctxId: string): string {

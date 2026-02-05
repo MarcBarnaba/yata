@@ -36,6 +36,14 @@
       <div class="mt-1 px-2 space-y-0.5">
         <NavLink to="/review" icon="✓" label="Weekly Review" />
       </div>
+
+      <div class="mt-4 px-3">
+        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Archive</span>
+      </div>
+      <div class="mt-1 px-2 space-y-0.5">
+        <NavLink to="/completed" icon="✓" label="Completed" />
+        <NavLink to="/trash" icon="🗑" label="Trash" :badge="trashedCount" />
+      </div>
     </div>
 
     <div class="border-t border-gray-200 py-2 px-2">
@@ -49,4 +57,5 @@ import NavLink from '~/components/NavLink.vue'
 
 const itemsStore = useItemsStore()
 const inboxCount = computed(() => itemsStore.inbox.length)
+const trashedCount = computed(() => itemsStore.trashed.length)
 </script>
