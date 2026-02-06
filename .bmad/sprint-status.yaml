@@ -145,11 +145,11 @@ sprints:
 
   - sprint_number: 7
     start_date: "2026-02-05"
-    end_date: null
+    end_date: "2026-02-06"
     capacity_points: 12
     committed_points: 11
     completed_points: 11
-    status: "active"
+    status: "completed"
     goal: "Upgrade visual system and interaction quality"
     stories:
       - story_id: "STORY-014"
@@ -178,24 +178,32 @@ sprints:
         completion_date: "2026-02-05"
 
   - sprint_number: 8
-    start_date: null
-    end_date: null
+    start_date: "2026-02-06"
+    end_date: "2026-02-06"
     capacity_points: 12
-    committed_points: 10
-    completed_points: 0
-    status: "planned"
+    committed_points: 12
+    completed_points: 12
+    status: "completed"
     goal: "Improve navigation ergonomics and add monthly calendar view"
     stories:
       - story_id: "STORY-018"
         title: "Collapsed Navigation + Mobile Capture FAB"
         points: 5
-        status: "not_started"
-        assigned_to: null
+        status: "completed"
+        assigned_to: "developer"
+        completion_date: "2026-02-06"
       - story_id: "STORY-019"
         title: "Calendar Monthly View"
         points: 5
-        status: "not_started"
-        assigned_to: null
+        status: "completed"
+        assigned_to: "developer"
+        completion_date: "2026-02-06"
+      - story_id: "STORY-020"
+        title: "Nav Transitions & Mobile Drawer Polish"
+        points: 2
+        status: "completed"
+        assigned_to: "developer"
+        completion_date: "2026-02-06"
 
 velocity:
   sprint_1: 11
@@ -204,9 +212,9 @@ velocity:
   sprint_4: 10
   sprint_5: 13
   sprint_6: 10
-  sprint_7: null
-  sprint_8: null
-  rolling_average: 11.7
+  sprint_7: 11
+  sprint_8: 12
+  rolling_average: 11.6
 
 team:
   size: 1
