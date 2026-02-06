@@ -69,6 +69,8 @@ export interface WeeklyReview {
 
 export interface Settings {
   version: string
+  navCollapsed?: boolean
+  calendarView?: 'week' | 'month'
 }
 
 export interface ExportData {

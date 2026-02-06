@@ -8,6 +8,8 @@ const STORAGE_KEY = 'settings'
 
 const DEFAULT_SETTINGS: Settings = {
   version: '1.0.0',
+  navCollapsed: true,
+  calendarView: 'week',
 }
 
 export const useSettingsStore = defineStore('settings', () => {
@@ -31,9 +33,24 @@ export const useSettingsStore = defineStore('settings', () => {
     persist()
   }
 
+  const navCollapsed = computed(() => settings.value.navCollapsed ?? true)
+  const calendarView = computed(() => settings.value.calendarView ?? 'week')
+
+  function toggleNavCollapsed() {
+    updateSettings({ navCollapsed: !settings.value.navCollapsed })
+  }
+
+  function setCalendarView(view: 'week' | 'month') {
+    updateSettings({ calendarView: view })
+  }
+
   return {
     settings,
+    navCollapsed,
+    calendarView,
     updateSettings,
     setSettings,
+    toggleNavCollapsed,
+    setCalendarView,
   }
 })
