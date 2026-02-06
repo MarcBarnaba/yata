@@ -1,14 +1,17 @@
 <template>
-  <nav class="flex flex-col h-full">
+  <nav class="flex flex-col h-full w-full">
     <div class="p-4 border-b border-gray-200 flex items-center justify-between">
-      <NuxtLink
-        v-if="!isCollapsed"
-        to="/"
-        class="text-xl font-bold text-gray-900 hover:text-blue-600"
-      >
-        GSD
-      </NuxtLink>
+      <Transition name="fade">
+        <NuxtLink
+          v-if="!isCollapsed"
+          to="/"
+          class="text-xl font-bold text-gray-900 hover:text-blue-600"
+        >
+          GSD
+        </NuxtLink>
+      </Transition>
       <button
+        v-if="!forceExpanded"
         class="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
         :class="{ 'mx-auto': isCollapsed }"
         :title="isCollapsed ? 'Expand navigation' : 'Collapse navigation'"
@@ -24,34 +27,42 @@
         <NavLink to="/inbox" icon="inbox" label="Inbox" :badge="inboxCount" :collapsed="isCollapsed" />
       </div>
 
-      <div v-if="!isCollapsed" class="mt-4 px-3">
-        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Actions</span>
-      </div>
+      <Transition name="fade">
+        <div v-if="!isCollapsed" class="mt-4 px-3">
+          <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Actions</span>
+        </div>
+      </Transition>
       <div class="mt-1 px-2 space-y-0.5" :class="{ 'mt-4': isCollapsed }">
         <NavLink to="/next-actions" icon="arrow_forward" label="Next Actions" :collapsed="isCollapsed" />
         <NavLink to="/waiting-for" icon="hourglass_empty" label="Waiting For" :collapsed="isCollapsed" />
         <NavLink to="/calendar" icon="calendar_month" label="Calendar" :collapsed="isCollapsed" />
       </div>
 
-      <div v-if="!isCollapsed" class="mt-4 px-3">
-        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Organize</span>
-      </div>
+      <Transition name="fade">
+        <div v-if="!isCollapsed" class="mt-4 px-3">
+          <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Organize</span>
+        </div>
+      </Transition>
       <div class="mt-1 px-2 space-y-0.5" :class="{ 'mt-4': isCollapsed }">
         <NavLink to="/projects" icon="folder" label="Projects" :collapsed="isCollapsed" />
         <NavLink to="/someday" icon="lightbulb" label="Someday / Maybe" :collapsed="isCollapsed" />
         <NavLink to="/reference" icon="description" label="Reference" :collapsed="isCollapsed" />
       </div>
 
-      <div v-if="!isCollapsed" class="mt-4 px-3">
-        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Review</span>
-      </div>
+      <Transition name="fade">
+        <div v-if="!isCollapsed" class="mt-4 px-3">
+          <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Review</span>
+        </div>
+      </Transition>
       <div class="mt-1 px-2 space-y-0.5" :class="{ 'mt-4': isCollapsed }">
         <NavLink to="/review" icon="checklist" label="Weekly Review" :collapsed="isCollapsed" />
       </div>
 
-      <div v-if="!isCollapsed" class="mt-4 px-3">
-        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Archive</span>
-      </div>
+      <Transition name="fade">
+        <div v-if="!isCollapsed" class="mt-4 px-3">
+          <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Archive</span>
+        </div>
+      </Transition>
       <div class="mt-1 px-2 space-y-0.5" :class="{ 'mt-4': isCollapsed }">
         <NavLink to="/completed" icon="check_circle" label="Completed" :collapsed="isCollapsed" />
         <NavLink to="/trash" icon="delete" label="Trash" :badge="trashedCount" :collapsed="isCollapsed" />
@@ -67,10 +78,25 @@
 <script setup lang="ts">
 import NavLink from '~/components/NavLink.vue'
 
+const props = defineProps<{
+  forceExpanded?: boolean
+}>()
+
 const itemsStore = useItemsStore()
 const settingsStore = useSettingsStore()
 
 const inboxCount = computed(() => itemsStore.inbox.length)
 const trashedCount = computed(() => itemsStore.trashed.length)
-const isCollapsed = computed(() => settingsStore.navCollapsed)
+const isCollapsed = computed(() => props.forceExpanded ? false : settingsStore.navCollapsed)
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 150ms ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
