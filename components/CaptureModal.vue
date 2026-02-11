@@ -10,7 +10,7 @@
     <Transition name="modal">
       <div
         v-if="open"
-        class="fixed inset-x-4 bottom-20 z-50 bg-white rounded-2xl shadow-2xl p-4 max-w-lg mx-auto"
+        class="fixed inset-x-4 top-4 z-50 bg-white rounded-2xl shadow-2xl p-4 max-w-lg mx-auto"
       >
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold text-gray-900">Capture</h2>
@@ -141,6 +141,6 @@ watch(() => props.open, (isOpen) => {
 .modal-enter-from,
 .modal-leave-to {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(-20px);
 }
 </style>
