@@ -1,9 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Project, ProjectStatus } from '~/types'
-import { LocalStorageAdapter } from '~/adapters/localStorage'
+import { persistence } from '~/adapters'
 
-const persistence = new LocalStorageAdapter()
 const STORAGE_KEY = 'projects'
 
 export const useProjectsStore = defineStore('projects', () => {

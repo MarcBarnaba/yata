@@ -70,11 +70,11 @@
               → Action
             </button>
             <button
-              class="rounded px-2 py-1 text-xs text-green-600 hover:bg-green-50 transition-colors whitespace-nowrap"
-              title="Create project from this item"
-              @click="createProject(item)"
+              class="rounded px-2 py-1 text-xs text-indigo-600 hover:bg-indigo-50 transition-colors whitespace-nowrap"
+              title="Break it down into a project with steps"
+              @click="breakingDown = item"
             >
-              → Project
+              Break down
             </button>
             <button
               class="rounded px-2 py-1 text-xs text-gray-500 hover:bg-gray-100 transition-colors"
@@ -102,6 +102,8 @@
         Ideas and possibilities will appear here after processing through the inbox.
       </p>
     </div>
+
+    <BreakdownModal :item="breakingDown" @done="breakingDown = null" @cancel="breakingDown = null" />
   </div>
 </template>
 
@@ -109,14 +111,15 @@
 import type { Item } from '~/types'
 
 const itemsStore = useItemsStore()
-const projectsStore = useProjectsStore()
 const contextsStore = useContextsStore()
-const router = useRouter()
 
 // Inline editing
 const editingId = ref<string | null>(null)
 const editTitle = ref('')
 const editNotes = ref('')
+
+// Break-it-down modal
+const breakingDown = ref<Item | null>(null)
 
 function startEdit(item: Item) {
   editingId.value = item.id
@@ -136,28 +139,6 @@ function saveEdit(id: string) {
 
 function promoteToNextAction(id: string) {
   itemsStore.updateItem(id, { status: 'next' })
-}
-
-function createProject(item: Item) {
-  const now = new Date().toISOString()
-  const projectId = crypto.randomUUID()
-
-  projectsStore.addProject({
-    id: projectId,
-    title: item.title,
-    outcome: item.notes || '',
-    status: 'active',
-    createdAt: now,
-    updatedAt: now,
-  })
-
-  // Convert the item into the project's first next action
-  itemsStore.updateItem(item.id, {
-    status: 'next',
-    projectId,
-  })
-
-  router.push(`/projects/${projectId}`)
 }
 
 function trashItem(id: string) {

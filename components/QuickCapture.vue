@@ -74,6 +74,7 @@ function capture() {
     contexts: [],
     tags: [],
     projectId: null,
+    parentId: null,
     dueDate: null,
     delegatedTo: null,
     waitingForDate: null,

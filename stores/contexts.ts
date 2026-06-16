@@ -1,9 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Context } from '~/types'
-import { LocalStorageAdapter } from '~/adapters/localStorage'
+import { persistence } from '~/adapters'
 
-const persistence = new LocalStorageAdapter()
 const STORAGE_KEY = 'contexts'
 
 const DEFAULT_CONTEXTS: Context[] = [

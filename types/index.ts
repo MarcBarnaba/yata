@@ -22,6 +22,7 @@ export interface Item {
   contexts: string[] // context IDs
   tags: string[] // tag IDs
   projectId: string | null
+  parentId: string | null // subtask: id of the parent item
   dueDate: string | null // ISO date
   delegatedTo: string | null
   waitingForDate: string | null // ISO date

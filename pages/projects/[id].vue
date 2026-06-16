@@ -162,6 +162,7 @@
                     {{ getContextName(ctxId) }}
                   </span>
                 </div>
+                <SubtaskList v-if="item.status === 'next'" :parent-id="item.id" />
               </div>
             </li>
           </ul>
@@ -253,6 +254,7 @@ function addItemToProject() {
     contexts: [],
     tags: [],
     projectId: projectId.value,
+    parentId: null,
     dueDate: null,
     delegatedTo: null,
     waitingForDate: null,

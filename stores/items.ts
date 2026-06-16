@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Item, ItemStatus } from '~/types'
-import { LocalStorageAdapter } from '~/adapters/localStorage'
+import { persistence } from '~/adapters'
+import { makeItem } from '~/utils/item'
 
-const persistence = new LocalStorageAdapter()
 const STORAGE_KEY = 'items'
 
 export const useItemsStore = defineStore('items', () => {
@@ -31,6 +31,14 @@ export const useItemsStore = defineStore('items', () => {
     return (projectId: string) => items.value.filter((i) => i.projectId === projectId && i.status !== 'trashed')
   })
 
+  // Child steps of an item (subtasks), oldest first.
+  const subtasks = computed(() => {
+    return (parentId: string) =>
+      items.value
+        .filter((i) => i.parentId === parentId && i.status !== 'trashed')
+        .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+  })
+
   function getById(id: string): Item | undefined {
     return items.value.find((i) => i.id === id)
   }
@@ -39,6 +47,19 @@ export const useItemsStore = defineStore('items', () => {
   function addItem(item: Item) {
     items.value.push(item)
     persist()
+  }
+
+  // Create a next-action subtask under a parent item, inheriting its project.
+  function addSubtask(parentId: string, title: string) {
+    const parent = items.value.find((i) => i.id === parentId)
+    addItem(
+      makeItem({
+        title,
+        status: 'next',
+        projectId: parent?.projectId ?? null,
+        parentId,
+      }),
+    )
   }
 
   function updateItem(id: string, updates: Partial<Omit<Item, 'id'>>) {
@@ -118,8 +139,10 @@ export const useItemsStore = defineStore('items', () => {
     trashed,
     byStatus,
     byProject,
+    subtasks,
     getById,
     addItem,
+    addSubtask,
     updateItem,
     removeItem,
     trashItem,

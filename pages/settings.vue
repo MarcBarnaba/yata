@@ -2,6 +2,75 @@
   <div>
     <h1 class="text-2xl font-bold text-gray-900">Settings</h1>
 
+    <!-- Account & Sync -->
+    <section class="mt-6">
+      <h2 class="text-lg font-semibold text-gray-800">Account &amp; Sync</h2>
+      <p class="mt-1 text-sm text-gray-500">
+        Sign in to sync your data across devices — like your iPhone. Your data keeps working
+        offline; signing in just keeps everything in step.
+      </p>
+
+      <!-- Sync not configured in this build -->
+      <div
+        v-if="!authStore.isConfigured"
+        class="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-500"
+      >
+        Cloud sync isn't configured in this build. Add Supabase credentials to enable it.
+      </div>
+
+      <!-- Signed out: request a magic link -->
+      <form
+        v-else-if="!authStore.isSignedIn"
+        class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center"
+        @submit.prevent="authStore.signIn(syncEmail)"
+      >
+        <input
+          v-model="syncEmail"
+          type="email"
+          required
+          placeholder="you@example.com"
+          class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+        <button
+          type="submit"
+          :disabled="authStore.sending || !syncEmail.trim()"
+          class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {{ authStore.sending ? 'Sending…' : 'Send magic link' }}
+        </button>
+      </form>
+
+      <!-- Signed in: status + sign out -->
+      <div
+        v-else
+        class="mt-4 flex items-center justify-between gap-3 rounded-lg border border-gray-200 p-4"
+      >
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full" :class="syncBadgeClass">
+            <Icon :name="syncIcon" size="sm" />
+          </span>
+          <div class="min-w-0">
+            <p class="truncate text-sm font-medium text-gray-900">{{ authStore.email }}</p>
+            <p class="text-xs text-gray-500">{{ syncStatusLabel }}</p>
+          </div>
+        </div>
+        <button
+          class="flex-shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100"
+          @click="authStore.signOut()"
+        >
+          Sign out
+        </button>
+      </div>
+
+      <p
+        v-if="authStore.message"
+        class="mt-3 text-sm"
+        :class="authStore.error ? 'text-red-600' : 'text-green-600'"
+      >
+        {{ authStore.message }}
+      </p>
+    </section>
+
     <!-- Contexts Management -->
     <section class="mt-6">
       <h2 class="text-lg font-semibold text-gray-800">Contexts</h2>
@@ -323,6 +392,36 @@ const itemsStore = useItemsStore()
 const projectsStore = useProjectsStore()
 const reviewsStore = useReviewsStore()
 const settingsStore = useSettingsStore()
+const authStore = useAuthStore()
+const syncStore = useSyncStore()
+
+// --- Account & sync ---
+const syncEmail = ref('')
+
+const syncStatusLabel = computed(() => {
+  switch (syncStore.status) {
+    case 'syncing':
+      return 'Syncing…'
+    case 'synced':
+      return 'All changes synced'
+    case 'error':
+      return 'Sync error — changes stay saved locally'
+    case 'offline':
+      return 'Offline'
+    default:
+      return 'Connected'
+  }
+})
+
+const syncIcon = computed(() => {
+  if (syncStore.status === 'error') return 'sync_problem'
+  if (syncStore.status === 'syncing') return 'sync'
+  return 'cloud_done'
+})
+
+const syncBadgeClass = computed(() =>
+  syncStore.status === 'error' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600',
+)
 
 // --- Context management ---
 const newContextName = ref('')

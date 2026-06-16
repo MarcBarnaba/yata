@@ -1,9 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { WeeklyReview } from '~/types'
-import { LocalStorageAdapter } from '~/adapters/localStorage'
+import { persistence } from '~/adapters'
 
-const persistence = new LocalStorageAdapter()
 const STORAGE_KEY = 'reviews'
 
 export const useReviewsStore = defineStore('reviews', () => {

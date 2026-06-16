@@ -156,6 +156,22 @@
                 {{ item.energy }}
               </span>
             </div>
+
+            <!-- Steps / subtasks -->
+            <div class="mt-1.5">
+              <button
+                type="button"
+                class="inline-flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-gray-600"
+                @click="toggleExpand(item.id)"
+              >
+                <Icon :name="expanded.has(item.id) ? 'expand_more' : 'chevron_right'" :size="16" />
+                <template v-if="stepInfo(item.id).total">
+                  {{ stepInfo(item.id).done }}/{{ stepInfo(item.id).total }} steps
+                </template>
+                <template v-else>Break into steps</template>
+              </button>
+              <SubtaskList v-if="expanded.has(item.id)" :parent-id="item.id" />
+            </div>
           </div>
 
           <!-- Trash -->
@@ -183,7 +199,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Duration, EnergyLevel } from '~/types'
+import type { Item, Duration, EnergyLevel } from '~/types'
 
 const itemsStore = useItemsStore()
 const projectsStore = useProjectsStore()
@@ -218,8 +234,28 @@ const filteredActions = computed(() => {
     actions = actions.filter((item) => item.energy === filterEnergy.value)
   }
 
-  return actions
+  // Show only top-level actions; subtasks render nested under their parent.
+  return actions.filter(isTopLevel)
 })
+
+// An item is top-level unless its parent is itself a current next action.
+function isTopLevel(item: Item): boolean {
+  if (!item.parentId) return true
+  return !itemsStore.nextActions.some((p) => p.id === item.parentId)
+}
+
+// Per-item expand state for the steps section.
+const expanded = ref<Set<string>>(new Set())
+function toggleExpand(id: string) {
+  const next = new Set(expanded.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  expanded.value = next
+}
+function stepInfo(id: string) {
+  const subs = itemsStore.subtasks(id)
+  return { total: subs.length, done: subs.filter((s) => s.status === 'done').length }
+}
 
 function toggleContext(id: string) {
   const idx = selectedContexts.value.indexOf(id)
