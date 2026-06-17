@@ -269,10 +269,7 @@ function addItemToProject() {
 }
 
 function markItemDone(id: string) {
-  itemsStore.updateItem(id, {
-    status: 'done',
-    completedAt: new Date().toISOString(),
-  })
+  itemsStore.completeItem(id)
 }
 
 function getContextName(ctxId: string): string {

@@ -2,20 +2,31 @@
   <div>
     <div class="flex items-center justify-between gap-3">
       <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-      <div class="flex items-center gap-3 text-sm">
-        <span
-          v-if="streak > 0"
-          class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-semibold"
-          :class="todayActive ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-500'"
-          :title="streakTitle"
-        >
-          <Icon name="local_fire_department" size="sm" :class="todayActive ? 'text-orange-500' : 'text-gray-400'" />
-          {{ streak }}
-        </span>
-        <div class="flex items-center gap-2">
-          <Icon :name="healthIcon" size="sm" :class="healthTextClass" />
-          <span :class="healthTextClass" class="hidden sm:inline">{{ healthLabel }}</span>
-        </div>
+      <div class="flex items-center gap-2 text-sm">
+        <Icon :name="healthIcon" size="sm" :class="healthTextClass" />
+        <span :class="healthTextClass" class="hidden sm:inline">{{ healthLabel }}</span>
+      </div>
+    </div>
+
+    <!-- Streak -->
+    <div
+      v-if="streak > 0"
+      class="mt-4 flex items-center gap-3 rounded-xl border p-3"
+      :class="todayActive ? 'border-orange-200 bg-orange-50' : 'border-gray-200 bg-gray-50'"
+    >
+      <span
+        class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full"
+        :class="todayActive ? 'bg-orange-100' : 'bg-gray-100'"
+      >
+        <Icon name="local_fire_department" size="lg" :class="todayActive ? 'text-orange-500' : 'text-gray-400'" />
+      </span>
+      <div class="min-w-0 flex-1">
+        <p class="text-base font-bold" :class="todayActive ? 'text-orange-800' : 'text-gray-700'">
+          {{ streak }}-day streak
+        </p>
+        <p class="text-xs" :class="todayActive ? 'text-orange-600' : 'text-gray-500'">
+          {{ todayActive ? 'Nice — keep it going!' : 'Complete a task today to keep it alive' }}
+        </p>
       </div>
     </div>
 
@@ -50,12 +61,6 @@
 const { bubbles } = useAttention()
 
 const { current: streak, todayDone: todayActive } = useStreak()
-
-const streakTitle = computed(() =>
-  todayActive.value
-    ? `${streak.value}-day streak`
-    : `${streak.value}-day streak — complete a task today to keep it going`,
-)
 
 // Lightweight health summary derived from the canvas itself.
 const healthLevel = computed<'green' | 'yellow' | 'red'>(() => {

@@ -1,5 +1,5 @@
 <template>
-  <nav class="flex items-center gap-1 rounded-2xl border border-gray-200 bg-white px-2 py-1.5 shadow-lg">
+  <nav class="flex items-center gap-1 rounded-full border border-white/60 bg-white/45 px-2 py-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.18)] ring-1 ring-black/5 backdrop-blur-2xl backdrop-saturate-150 [-webkit-backdrop-filter:blur(24px)_saturate(1.5)] dark:border-white/10 dark:bg-slate-900/55 dark:ring-white/5">
     <MobileNavLink to="/today" icon="today" label="Today" />
     <MobileNavLink to="/inbox" icon="inbox" label="Inbox" :badge="inboxCount" />
 

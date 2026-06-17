@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
+  css: ['~/assets/css/main.css'],
   modules: [
     '@pinia/nuxt',
     '@nuxtjs/tailwindcss',
@@ -34,6 +35,15 @@ export default defineNuxtConfig({
       link: [
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
         { rel: 'icon', type: 'image/png', href: '/favicon.png' },
+      ],
+      script: [
+        {
+          // Apply the saved theme before first paint to avoid a flash of light UI.
+          innerHTML:
+            "(function(){try{var s=JSON.parse(localStorage.getItem('gsd:settings')||'{}');var t=s.theme||'system';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark');}catch(e){}})();",
+          type: 'text/javascript',
+          tagPosition: 'head',
+        },
       ],
     },
   },

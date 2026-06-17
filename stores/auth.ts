@@ -6,7 +6,10 @@ import { getSupabase, isSupabaseConfigured } from '~/lib/supabase'
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
   const ready = ref(false) // initial session check finished
-  const sending = ref(false) // magic-link request in flight
+  const sending = ref(false) // code request in flight
+  const verifying = ref(false) // code verification in flight
+  const codeSent = ref(false) // show the code-entry step
+  const pendingEmail = ref('')
   const message = ref('')
   const error = ref(false)
 
@@ -29,8 +32,12 @@ export const useAuthStore = defineStore('auth', () => {
     ready.value = true
   }
 
-  /** Send a passwordless magic link to the given email. */
-  async function signIn(address: string) {
+  /**
+   * Email a 6-digit code. We verify the code in-app (instead of a magic link)
+   * so the session is created inside this PWA's storage — on iOS a magic link
+   * opens Safari, a separate storage jar, so the installed app stays signed out.
+   */
+  async function sendCode(address: string) {
     const sb = getSupabase()
     if (!sb) return
     const target = address.trim()
@@ -40,15 +47,48 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = false
     const { error: err } = await sb.auth.signInWithOtp({
       email: target,
-      options: { emailRedirectTo: window.location.origin },
+      options: { shouldCreateUser: true },
     })
     sending.value = false
     if (err) {
       error.value = true
       message.value = err.message
     } else {
-      message.value = `Check your email — we sent a magic link to ${target}.`
+      pendingEmail.value = target
+      codeSent.value = true
+      message.value = `We emailed a 6-digit code to ${target}.`
     }
+  }
+
+  async function verifyCode(token: string) {
+    const sb = getSupabase()
+    if (!sb || !pendingEmail.value) return
+    const code = token.trim()
+    if (!code) return
+    verifying.value = true
+    message.value = ''
+    error.value = false
+    const { error: err } = await sb.auth.verifyOtp({
+      email: pendingEmail.value,
+      token: code,
+      type: 'email',
+    })
+    verifying.value = false
+    if (err) {
+      error.value = true
+      message.value = err.message
+    } else {
+      codeSent.value = false
+      pendingEmail.value = ''
+      message.value = ''
+    }
+  }
+
+  function resetSignIn() {
+    codeSent.value = false
+    pendingEmail.value = ''
+    message.value = ''
+    error.value = false
   }
 
   async function signOut() {
@@ -56,21 +96,25 @@ export const useAuthStore = defineStore('auth', () => {
     if (!sb) return
     await sb.auth.signOut()
     user.value = null
-    message.value = ''
-    error.value = false
+    resetSignIn()
   }
 
   return {
     user,
     ready,
     sending,
+    verifying,
+    codeSent,
+    pendingEmail,
     message,
     error,
     isConfigured,
     isSignedIn,
     email,
     init,
-    signIn,
+    sendCode,
+    verifyCode,
+    resetSignIn,
     signOut,
   }
 })

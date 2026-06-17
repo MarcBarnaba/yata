@@ -18,27 +18,57 @@
         Cloud sync isn't configured in this build. Add Supabase credentials to enable it.
       </div>
 
-      <!-- Signed out: request a magic link -->
-      <form
-        v-else-if="!authStore.isSignedIn"
-        class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center"
-        @submit.prevent="authStore.signIn(syncEmail)"
-      >
-        <input
-          v-model="syncEmail"
-          type="email"
-          required
-          placeholder="you@example.com"
-          class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        />
-        <button
-          type="submit"
-          :disabled="authStore.sending || !syncEmail.trim()"
-          class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+      <!-- Signed out: email → 6-digit code (verified in-app, so the session lives in this PWA) -->
+      <div v-else-if="!authStore.isSignedIn" class="mt-4">
+        <form
+          v-if="!authStore.codeSent"
+          class="flex flex-col gap-2 sm:flex-row sm:items-center"
+          @submit.prevent="authStore.sendCode(syncEmail)"
         >
-          {{ authStore.sending ? 'Sending…' : 'Send magic link' }}
-        </button>
-      </form>
+          <input
+            v-model="syncEmail"
+            type="email"
+            required
+            placeholder="you@example.com"
+            class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            :disabled="authStore.sending || !syncEmail.trim()"
+            class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Icon name="mail" size="sm" />
+            {{ authStore.sending ? 'Sending…' : 'Send code' }}
+          </button>
+        </form>
+
+        <form
+          v-else
+          class="flex flex-col gap-2 sm:flex-row sm:items-center"
+          @submit.prevent="authStore.verifyCode(syncCode)"
+        >
+          <input
+            v-model="syncCode"
+            type="text"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            required
+            placeholder="6-digit code"
+            class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm tracking-widest focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            :disabled="authStore.verifying || !syncCode.trim()"
+            class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Icon name="login" size="sm" />
+            {{ authStore.verifying ? 'Verifying…' : 'Verify & sign in' }}
+          </button>
+          <button type="button" class="text-sm text-gray-500 hover:text-gray-700" @click="cancelCode">
+            Use a different email
+          </button>
+        </form>
+      </div>
 
       <!-- Signed in: status + sign out -->
       <div
@@ -69,6 +99,26 @@
       >
         {{ authStore.message }}
       </p>
+    </section>
+
+    <!-- Appearance -->
+    <section class="mt-6">
+      <h2 class="text-lg font-semibold text-gray-800">Appearance</h2>
+      <p class="mt-1 text-sm text-gray-500">Choose how GSD looks.</p>
+      <div class="mt-4 grid grid-cols-3 gap-2">
+        <button
+          v-for="opt in themeOptions"
+          :key="opt.value"
+          class="flex flex-col items-center gap-1.5 rounded-lg border px-3 py-3 text-sm font-medium transition-colors"
+          :class="settingsStore.theme === opt.value
+            ? 'border-blue-500 bg-blue-50 text-blue-700'
+            : 'border-gray-200 text-gray-600 hover:bg-gray-50'"
+          @click="settingsStore.setTheme(opt.value)"
+        >
+          <Icon :name="opt.icon" size="md" />
+          {{ opt.label }}
+        </button>
+      </div>
     </section>
 
     <!-- Contexts Management -->
@@ -477,6 +527,18 @@ const syncStore = useSyncStore()
 
 // --- Account & sync ---
 const syncEmail = ref('')
+const syncCode = ref('')
+
+const themeOptions = [
+  { value: 'light', label: 'Light', icon: 'light_mode' },
+  { value: 'dark', label: 'Dark', icon: 'dark_mode' },
+  { value: 'system', label: 'System', icon: 'contrast' },
+] as const
+
+function cancelCode() {
+  authStore.resetSignIn()
+  syncCode.value = ''
+}
 
 const syncStatusLabel = computed(() => {
   switch (syncStore.status) {

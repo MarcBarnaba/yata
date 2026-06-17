@@ -34,7 +34,10 @@
             <Icon name="check" :size="14" class="opacity-0 transition-opacity group-hover:opacity-100" />
           </button>
           <div class="min-w-0 flex-1">
-            <p class="truncate text-sm font-medium text-gray-900">{{ item.title }}</p>
+            <p class="flex items-center gap-1 text-sm font-medium text-gray-900">
+              <span class="truncate">{{ item.title }}</span>
+              <Icon v-if="item.recurrence" name="repeat" :size="13" class="flex-shrink-0 text-gray-400" :title="recurLabel(item.recurrence)" />
+            </p>
             <p class="mt-0.5 text-xs font-medium text-red-600">{{ dueLabel(item.dueDate!) }}</p>
           </div>
           <NuxtLink
@@ -59,7 +62,10 @@
             <Icon name="check" :size="14" class="opacity-0 transition-opacity group-hover:opacity-100" />
           </button>
           <div class="min-w-0 flex-1">
-            <p class="truncate text-sm font-medium text-gray-900">{{ item.title }}</p>
+            <p class="flex items-center gap-1 text-sm font-medium text-gray-900">
+              <span class="truncate">{{ item.title }}</span>
+              <Icon v-if="item.recurrence" name="repeat" :size="13" class="flex-shrink-0 text-gray-400" :title="recurLabel(item.recurrence)" />
+            </p>
             <div v-if="item.contexts.length || item.duration" class="mt-0.5 flex flex-wrap items-center gap-1.5">
               <span
                 v-for="ctxId in item.contexts"
@@ -118,8 +124,15 @@
 </template>
 
 <script setup lang="ts">
+import type { Recurrence } from '~/types'
+import { recurrenceLabel } from '~/utils/recurrence'
+
 const itemsStore = useItemsStore()
 const contextsStore = useContextsStore()
+
+function recurLabel(rec: Recurrence): string {
+  return recurrenceLabel(rec)
+}
 
 const inboxCount = computed(() => itemsStore.inbox.length)
 
@@ -159,7 +172,7 @@ function dueLabel(iso: string): string {
 }
 
 function markDone(id: string) {
-  itemsStore.updateItem(id, { status: 'done', completedAt: new Date().toISOString() })
+  itemsStore.completeItem(id)
 }
 
 function getContextName(ctxId: string): string {

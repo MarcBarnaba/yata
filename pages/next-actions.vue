@@ -176,7 +176,7 @@
 
           <!-- Trash -->
           <button
-            class="rounded px-2 py-1 text-xs text-red-500 opacity-0 group-hover:opacity-100 hover:bg-red-50 transition-all"
+            class="rounded px-2 py-1 text-xs text-red-500 opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:bg-red-50 transition-all"
             title="Trash"
             @click="trashItem(item.id)"
           >
@@ -276,10 +276,7 @@ function toggleTag(id: string) {
 }
 
 function markDone(id: string) {
-  itemsStore.updateItem(id, {
-    status: 'done',
-    completedAt: new Date().toISOString(),
-  })
+  itemsStore.completeItem(id)
 }
 
 function getProjectName(projectId: string): string {

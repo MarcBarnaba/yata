@@ -4,6 +4,8 @@ import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js'
 import { getSupabase, SYNC_SOURCE_ID } from '~/lib/supabase'
 import { persistence } from '~/adapters'
 
+const SYNC_USER_KEY = 'gsd:syncUser'
+
 export type SyncStatus = 'idle' | 'syncing' | 'synced' | 'error' | 'offline'
 
 interface Mergeable {
@@ -60,6 +62,18 @@ export const useSyncStore = defineStore('sync', () => {
     }
   }
 
+  // Reset all local stores (used when a different account signs in on this device).
+  function clearLocalData() {
+    persistence.suspendRemote = true
+    useItemsStore().setItems([])
+    useProjectsStore().setProjects([])
+    useContextsStore().setContexts([])
+    useTagsStore().setTags([])
+    useCalendarsStore().setCalendars([])
+    useReviewsStore().setReviews([])
+    persistence.suspendRemote = false
+  }
+
   /** Apply a remote blob to its store without echoing the change back to remote. */
   function applyRemote(binding: Binding, data: unknown) {
     persistence.suspendRemote = true
@@ -75,6 +89,13 @@ export const useSyncStore = defineStore('sync', () => {
     }
     persistence.userId = userId
     status.value = 'syncing'
+
+    // Multi-account safety: if this device last synced a DIFFERENT user, wipe
+    // the local cache first so we adopt the new account's cloud (no data bleed).
+    const previousUser =
+      typeof localStorage !== 'undefined' ? localStorage.getItem(SYNC_USER_KEY) : null
+    if (previousUser && previousUser !== userId) clearLocalData()
+
     try {
       const map = bindings()
 
@@ -99,6 +120,7 @@ export const useSyncStore = defineStore('sync', () => {
 
       lastSyncedAt.value = new Date().toISOString()
       status.value = 'synced'
+      if (typeof localStorage !== 'undefined') localStorage.setItem(SYNC_USER_KEY, userId)
     } catch (e) {
       console.error('[sync] start failed', e)
       status.value = 'error'

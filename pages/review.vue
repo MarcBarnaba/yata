@@ -389,10 +389,7 @@ function goToStep(i: number) {
 
 // Inline actions
 function markDone(id: string) {
-  itemsStore.updateItem(id, {
-    status: 'done',
-    completedAt: new Date().toISOString(),
-  })
+  itemsStore.completeItem(id)
 }
 
 function convertToNextAction(id: string) {

@@ -63,7 +63,7 @@
             </div>
             <div class="flex items-center gap-2">
               <button
-                class="rounded px-2 py-1.5 text-sm text-gray-400 hover:bg-gray-100 hover:text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                class="rounded px-2 py-1.5 text-sm text-gray-400 hover:bg-gray-100 hover:text-gray-700 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                 @click="startEdit(item)"
               >
                 Edit

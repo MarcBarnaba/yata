@@ -12,6 +12,13 @@ export type Duration = '5min' | '15min' | '30min' | '1h' | '2h+'
 
 export type EnergyLevel = 'low' | 'medium' | 'high'
 
+export type RecurrenceFreq = 'daily' | 'weekly' | 'monthly'
+
+export interface Recurrence {
+  freq: RecurrenceFreq
+  interval: number // repeat every N days/weeks/months (>= 1)
+}
+
 export interface Item {
   id: string
   title: string
@@ -31,6 +38,7 @@ export interface Item {
   previousStatus: ItemStatus | null // status before trashing, for undo
   duration: Duration | null
   energy: EnergyLevel | null
+  recurrence: Recurrence | null // routine: regenerate on completion
 }
 
 export type ProjectStatus = 'active' | 'completed' | 'trashed'
@@ -75,10 +83,13 @@ export interface WeeklyReview {
   stats: ReviewStats
 }
 
+export type ThemePref = 'light' | 'dark' | 'system'
+
 export interface Settings {
   version: string
   navCollapsed?: boolean
   calendarView?: 'week' | 'month'
+  theme?: ThemePref
 }
 
 export interface ExportData {

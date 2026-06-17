@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import type { Item, ItemStatus } from '~/types'
 import { persistence } from '~/adapters'
 import { makeItem } from '~/utils/item'
+import { advanceISODate } from '~/utils/recurrence'
 
 const STORAGE_KEY = 'items'
 
@@ -71,6 +72,38 @@ export const useItemsStore = defineStore('items', () => {
       updatedAt: new Date().toISOString(),
     }
     persist()
+  }
+
+  // Mark an item done. If it's a recurring routine with a due date, spawn the
+  // next occurrence (advanced by its interval) so the routine keeps coming back.
+  function completeItem(id: string) {
+    const item = items.value.find((i) => i.id === id)
+    if (!item) return
+    const wasStatus = item.status
+    const rec = item.recurrence
+    const due = item.dueDate
+    updateItem(id, {
+      status: 'done',
+      completedAt: new Date().toISOString(),
+      recurrence: null, // the completed instance no longer recurs
+    })
+    if (rec && due) {
+      addItem(
+        makeItem({
+          title: item.title,
+          notes: item.notes,
+          status: wasStatus === 'done' || wasStatus === 'trashed' ? 'next' : wasStatus,
+          contexts: [...item.contexts],
+          tags: [...(item.tags ?? [])],
+          projectId: item.projectId,
+          calendarId: item.calendarId,
+          dueDate: advanceISODate(due, rec),
+          duration: item.duration,
+          energy: item.energy,
+          recurrence: rec,
+        }),
+      )
+    }
   }
 
   function removeItem(id: string) {
@@ -143,6 +176,7 @@ export const useItemsStore = defineStore('items', () => {
     getById,
     addItem,
     addSubtask,
+    completeItem,
     updateItem,
     removeItem,
     trashItem,

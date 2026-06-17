@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { Settings } from '~/types'
+import type { Settings, ThemePref } from '~/types'
 import { persistence } from '~/adapters'
 
 const STORAGE_KEY = 'settings'
@@ -9,6 +9,7 @@ const DEFAULT_SETTINGS: Settings = {
   version: '1.0.0',
   navCollapsed: true,
   calendarView: 'week',
+  theme: 'system',
 }
 
 export const useSettingsStore = defineStore('settings', () => {
@@ -34,6 +35,11 @@ export const useSettingsStore = defineStore('settings', () => {
 
   const navCollapsed = computed(() => settings.value.navCollapsed ?? true)
   const calendarView = computed(() => settings.value.calendarView ?? 'week')
+  const theme = computed<ThemePref>(() => settings.value.theme ?? 'system')
+
+  function setTheme(value: ThemePref) {
+    updateSettings({ theme: value })
+  }
 
   function toggleNavCollapsed() {
     updateSettings({ navCollapsed: !settings.value.navCollapsed })
@@ -47,9 +53,11 @@ export const useSettingsStore = defineStore('settings', () => {
     settings,
     navCollapsed,
     calendarView,
+    theme,
     updateSettings,
     setSettings,
     toggleNavCollapsed,
     setCalendarView,
+    setTheme,
   }
 })

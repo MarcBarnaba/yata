@@ -1,0 +1,149 @@
+/* Prevent iOS Safari from auto-zooming when a form field is focused.
+   Safari zooms in (and often stays zoomed) whenever the focused control's
+   font-size is below 16px. Forcing 16px on small screens stops the jump. */
+@media (max-width: 767px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   Dark mode.
+   The app is saturated with hard-coded Tailwind colors, so rather than add a
+   `dark:` variant to every element we remap the common utilities under `.dark`.
+   This gives whole-app coverage from one place. Accent panels become dark tints
+   with light text; `text-white` on colored buttons is intentionally untouched.
+   ─────────────────────────────────────────────────────────────────────────── */
+.dark body {
+  background-color: #0b0f17;
+  color: #e8eaed;
+}
+
+/* Surfaces */
+.dark .bg-white { background-color: #161b26 !important; }
+.dark .bg-gray-50 { background-color: #0e131c !important; }
+.dark .bg-gray-100 { background-color: #1f2632 !important; }
+.dark .bg-gray-200 { background-color: #2a323f !important; }
+.dark .hover\:bg-gray-50:hover { background-color: #1a212c !important; }
+.dark .hover\:bg-gray-100:hover { background-color: #232b38 !important; }
+.dark .hover\:bg-gray-200:hover { background-color: #2d3543 !important; }
+
+/* Gray text */
+.dark .text-gray-900 { color: #e8eaed !important; }
+.dark .text-gray-800 { color: #dde1e6 !important; }
+.dark .text-gray-700 { color: #cbd2da !important; }
+.dark .text-gray-600 { color: #b2bac4 !important; }
+.dark .text-gray-500 { color: #939dab !important; }
+.dark .text-gray-400 { color: #6f7886 !important; }
+.dark .hover\:text-gray-700:hover { color: #cbd2da !important; }
+.dark .hover\:text-gray-600:hover { color: #b2bac4 !important; }
+
+/* Borders & dividers */
+.dark .border-gray-100 { border-color: #1f2632 !important; }
+.dark .border-gray-200 { border-color: #2a323f !important; }
+.dark .border-gray-300 { border-color: #3a4453 !important; }
+.dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]) { border-color: #1f2632 !important; }
+.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) { border-color: #2a323f !important; }
+
+/* ── Accent colors (red / amber / green / blue / purple / indigo / orange) ──
+   Soft 50/100/200 fills become dark tints; 200/300 borders gain alpha; the
+   dark 600–900 text variants are lightened so they read on the dark tints. */
+
+/* red — rgb(239,68,68) */
+.dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.15) !important; }
+.dark .bg-red-100 { background-color: rgba(239, 68, 68, 0.24) !important; }
+.dark .bg-red-200 { background-color: rgba(239, 68, 68, 0.32) !important; }
+.dark .hover\:bg-red-50:hover { background-color: rgba(239, 68, 68, 0.20) !important; }
+.dark .hover\:bg-red-100:hover { background-color: rgba(239, 68, 68, 0.28) !important; }
+.dark .border-red-200 { border-color: rgba(239, 68, 68, 0.42) !important; }
+.dark .border-red-300 { border-color: rgba(239, 68, 68, 0.52) !important; }
+.dark .text-red-900, .dark .text-red-800 { color: #fecaca !important; }
+.dark .text-red-700, .dark .text-red-600 { color: #fca5a5 !important; }
+.dark .text-red-500 { color: #f87171 !important; }
+
+/* amber — rgb(245,158,11) */
+.dark .bg-amber-50 { background-color: rgba(245, 158, 11, 0.15) !important; }
+.dark .bg-amber-100 { background-color: rgba(245, 158, 11, 0.24) !important; }
+.dark .bg-amber-200 { background-color: rgba(245, 158, 11, 0.32) !important; }
+.dark .hover\:bg-amber-50:hover { background-color: rgba(245, 158, 11, 0.20) !important; }
+.dark .hover\:bg-amber-100:hover { background-color: rgba(245, 158, 11, 0.28) !important; }
+.dark .border-amber-200 { border-color: rgba(245, 158, 11, 0.42) !important; }
+.dark .border-amber-300 { border-color: rgba(245, 158, 11, 0.52) !important; }
+.dark .text-amber-900, .dark .text-amber-800 { color: #fde68a !important; }
+.dark .text-amber-700, .dark .text-amber-600 { color: #fcd34d !important; }
+.dark .text-amber-500 { color: #fbbf24 !important; }
+
+/* green — rgb(34,197,94) */
+.dark .bg-green-50 { background-color: rgba(34, 197, 94, 0.15) !important; }
+.dark .bg-green-100 { background-color: rgba(34, 197, 94, 0.24) !important; }
+.dark .bg-green-200 { background-color: rgba(34, 197, 94, 0.32) !important; }
+.dark .hover\:bg-green-50:hover { background-color: rgba(34, 197, 94, 0.20) !important; }
+.dark .hover\:bg-green-100:hover { background-color: rgba(34, 197, 94, 0.28) !important; }
+.dark .border-green-200 { border-color: rgba(34, 197, 94, 0.42) !important; }
+.dark .border-green-300 { border-color: rgba(34, 197, 94, 0.52) !important; }
+.dark .text-green-900, .dark .text-green-800 { color: #bbf7d0 !important; }
+.dark .text-green-700, .dark .text-green-600 { color: #86efac !important; }
+.dark .text-green-500 { color: #4ade80 !important; }
+
+/* blue — rgb(59,130,246) */
+.dark .bg-blue-50 { background-color: rgba(59, 130, 246, 0.15) !important; }
+.dark .bg-blue-100 { background-color: rgba(59, 130, 246, 0.24) !important; }
+.dark .bg-blue-200 { background-color: rgba(59, 130, 246, 0.32) !important; }
+.dark .hover\:bg-blue-50:hover { background-color: rgba(59, 130, 246, 0.20) !important; }
+.dark .hover\:bg-blue-100:hover { background-color: rgba(59, 130, 246, 0.28) !important; }
+.dark .border-blue-200 { border-color: rgba(59, 130, 246, 0.42) !important; }
+.dark .border-blue-300 { border-color: rgba(59, 130, 246, 0.52) !important; }
+.dark .text-blue-900, .dark .text-blue-800 { color: #bfdbfe !important; }
+.dark .text-blue-700, .dark .text-blue-600 { color: #93c5fd !important; }
+.dark .text-blue-500 { color: #60a5fa !important; }
+
+/* purple — rgb(168,85,247) */
+.dark .bg-purple-50 { background-color: rgba(168, 85, 247, 0.15) !important; }
+.dark .bg-purple-100 { background-color: rgba(168, 85, 247, 0.24) !important; }
+.dark .bg-purple-200 { background-color: rgba(168, 85, 247, 0.32) !important; }
+.dark .hover\:bg-purple-50:hover { background-color: rgba(168, 85, 247, 0.20) !important; }
+.dark .hover\:bg-purple-100:hover { background-color: rgba(168, 85, 247, 0.28) !important; }
+.dark .border-purple-200 { border-color: rgba(168, 85, 247, 0.42) !important; }
+.dark .border-purple-300 { border-color: rgba(168, 85, 247, 0.52) !important; }
+.dark .text-purple-900, .dark .text-purple-800 { color: #e9d5ff !important; }
+.dark .text-purple-700, .dark .text-purple-600 { color: #d8b4fe !important; }
+.dark .text-purple-500 { color: #c084fc !important; }
+
+/* indigo — rgb(99,102,241) */
+.dark .bg-indigo-50 { background-color: rgba(99, 102, 241, 0.15) !important; }
+.dark .bg-indigo-100 { background-color: rgba(99, 102, 241, 0.24) !important; }
+.dark .bg-indigo-200 { background-color: rgba(99, 102, 241, 0.32) !important; }
+.dark .hover\:bg-indigo-50:hover { background-color: rgba(99, 102, 241, 0.20) !important; }
+.dark .hover\:bg-indigo-100:hover { background-color: rgba(99, 102, 241, 0.28) !important; }
+.dark .border-indigo-200 { border-color: rgba(99, 102, 241, 0.42) !important; }
+.dark .border-indigo-300 { border-color: rgba(99, 102, 241, 0.52) !important; }
+.dark .text-indigo-900, .dark .text-indigo-800 { color: #c7d2fe !important; }
+.dark .text-indigo-700, .dark .text-indigo-600 { color: #a5b4fc !important; }
+.dark .text-indigo-500 { color: #818cf8 !important; }
+
+/* orange — rgb(249,115,22) */
+.dark .bg-orange-50 { background-color: rgba(249, 115, 22, 0.15) !important; }
+.dark .bg-orange-100 { background-color: rgba(249, 115, 22, 0.24) !important; }
+.dark .bg-orange-200 { background-color: rgba(249, 115, 22, 0.32) !important; }
+.dark .hover\:bg-orange-50:hover { background-color: rgba(249, 115, 22, 0.20) !important; }
+.dark .hover\:bg-orange-100:hover { background-color: rgba(249, 115, 22, 0.28) !important; }
+.dark .border-orange-200 { border-color: rgba(249, 115, 22, 0.42) !important; }
+.dark .border-orange-300 { border-color: rgba(249, 115, 22, 0.52) !important; }
+.dark .text-orange-900, .dark .text-orange-800 { color: #fed7aa !important; }
+.dark .text-orange-700, .dark .text-orange-600 { color: #fdba74 !important; }
+.dark .text-orange-500 { color: #fb923c !important; }
+
+/* yellow — rgb(234,179,8) */
+.dark .bg-yellow-50 { background-color: rgba(234, 179, 8, 0.15) !important; }
+.dark .bg-yellow-100 { background-color: rgba(234, 179, 8, 0.24) !important; }
+.dark .border-yellow-200 { border-color: rgba(234, 179, 8, 0.42) !important; }
+.dark .text-yellow-900, .dark .text-yellow-800 { color: #fef08a !important; }
+.dark .text-yellow-700, .dark .text-yellow-600 { color: #fde047 !important; }
+
+/* Form controls inherit the dark surface */
+.dark input,
+.dark textarea,
+.dark select { color: #e8eaed; }
+.dark ::placeholder { color: #6f7886 !important; }

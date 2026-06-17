@@ -20,7 +20,7 @@
           :class="s.status === 'done' ? 'text-gray-400 line-through' : 'text-gray-700'"
         >{{ s.title }}</span>
         <button
-          class="rounded px-1 text-red-400 opacity-0 transition-all hover:text-red-600 group-hover:opacity-100"
+          class="rounded px-1 text-red-400 opacity-100 transition-all hover:text-red-600 md:opacity-0 md:group-hover:opacity-100"
           title="Remove step"
           @click="remove(s.id)"
         >
@@ -64,7 +64,7 @@ function toggle(s: Item) {
   if (s.status === 'done') {
     itemsStore.updateItem(s.id, { status: 'next', completedAt: null })
   } else {
-    itemsStore.updateItem(s.id, { status: 'done', completedAt: new Date().toISOString() })
+    itemsStore.completeItem(s.id)
   }
 }
 

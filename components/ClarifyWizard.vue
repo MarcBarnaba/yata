@@ -334,6 +334,32 @@
           />
         </div>
         <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Repeat</label>
+          <div class="flex gap-2">
+            <select
+              v-model="recurrenceFreq"
+              class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option :value="null">Doesn't repeat</option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+            <div v-if="recurrenceFreq" class="flex items-center gap-2">
+              <span class="text-sm text-gray-500">every</span>
+              <input
+                v-model.number="recurrenceInterval"
+                type="number"
+                min="1"
+                class="w-16 rounded-lg border border-gray-300 px-2 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+          <p v-if="recurrenceFreq" class="mt-1 text-xs text-gray-400">
+            A new occurrence is created automatically when you complete it.
+          </p>
+        </div>
+        <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Calendar</label>
           <CalendarSelector v-model="selectedCalendar" />
         </div>
@@ -403,7 +429,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Item, ItemStatus, Duration, EnergyLevel } from '~/types'
+import type { Item, ItemStatus, Duration, EnergyLevel, RecurrenceFreq } from '~/types'
 
 const props = defineProps<{
   item: Item
@@ -438,6 +464,8 @@ const selectedEnergy = ref<EnergyLevel | null>(props.item.energy ?? null)
 const delegatedTo = ref('')
 const waitingForDate = ref('')
 const dueDate = ref('')
+const recurrenceFreq = ref<RecurrenceFreq | null>(props.item.recurrence?.freq ?? null)
+const recurrenceInterval = ref<number>(props.item.recurrence?.interval ?? 1)
 const selectedCalendar = ref<string | null>(props.item.calendarId ?? null)
 const projectTitle = ref(props.item.title)
 const projectOutcome = ref('')
@@ -516,6 +544,9 @@ function saveAsCalendar() {
     tags: selectedTags.value,
     duration: selectedDuration.value,
     energy: selectedEnergy.value,
+    recurrence: recurrenceFreq.value
+      ? { freq: recurrenceFreq.value, interval: Math.max(1, recurrenceInterval.value || 1) }
+      : null,
   })
   emit('done')
   router.push('/inbox')

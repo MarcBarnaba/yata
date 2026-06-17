@@ -26,6 +26,7 @@ export function makeItem(partial: Partial<Item> & { title: string }): Item {
     previousStatus: null,
     duration: null,
     energy: null,
+    recurrence: null,
     ...partial,
   }
 }

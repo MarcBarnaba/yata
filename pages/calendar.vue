@@ -99,7 +99,7 @@
           </button>
           <div class="flex-1 min-w-0">
             <p class="text-sm font-medium text-gray-900">
-              <span v-if="item.calendarId" class="mr-1.5 inline-block h-2 w-2 rounded-full align-middle" :style="{ backgroundColor: calendarColor(item.calendarId) }" />{{ item.title }}
+              <span v-if="item.calendarId" class="mr-1.5 inline-block h-2 w-2 rounded-full align-middle" :style="{ backgroundColor: calendarColor(item.calendarId) }" />{{ item.title }}<Icon v-if="item.recurrence" name="repeat" :size="13" class="ml-1 align-middle text-gray-400" />
             </p>
             <div class="mt-0.5 flex flex-wrap items-center gap-2 text-xs">
               <span class="text-red-600 font-medium">{{ formatDate(item.dueDate!) }}</span>
@@ -114,7 +114,7 @@
             </div>
           </div>
           <button
-            class="rounded px-2 py-1 text-xs text-red-500 opacity-0 group-hover:opacity-100 hover:bg-red-50 transition-all"
+            class="rounded px-2 py-1 text-xs text-red-500 opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:bg-red-50 transition-all"
             title="Trash"
             @click="trashItem(item.id)"
           >
@@ -152,7 +152,7 @@
               </button>
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-900">
-                  <span v-if="item.calendarId" class="mr-1.5 inline-block h-2 w-2 rounded-full align-middle" :style="{ backgroundColor: calendarColor(item.calendarId) }" />{{ item.title }}
+                  <span v-if="item.calendarId" class="mr-1.5 inline-block h-2 w-2 rounded-full align-middle" :style="{ backgroundColor: calendarColor(item.calendarId) }" />{{ item.title }}<Icon v-if="item.recurrence" name="repeat" :size="13" class="ml-1 align-middle text-gray-400" />
                 </p>
                 <p v-if="item.notes" class="mt-0.5 text-sm text-gray-500 line-clamp-1">{{ item.notes }}</p>
                 <div class="mt-0.5 flex flex-wrap items-center gap-2 text-xs">
@@ -173,7 +173,7 @@
                 </div>
               </div>
               <button
-                class="rounded px-2 py-1 text-xs text-red-500 opacity-0 group-hover:opacity-100 hover:bg-red-50 transition-all"
+                class="rounded px-2 py-1 text-xs text-red-500 opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:bg-red-50 transition-all"
                 title="Trash"
                 @click="trashItem(item.id)"
               >
@@ -277,7 +277,7 @@
             </button>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium text-gray-900">
-                <span v-if="item.calendarId" class="mr-1.5 inline-block h-2 w-2 rounded-full align-middle" :style="{ backgroundColor: calendarColor(item.calendarId) }" />{{ item.title }}
+                <span v-if="item.calendarId" class="mr-1.5 inline-block h-2 w-2 rounded-full align-middle" :style="{ backgroundColor: calendarColor(item.calendarId) }" />{{ item.title }}<Icon v-if="item.recurrence" name="repeat" :size="13" class="ml-1 align-middle text-gray-400" />
               </p>
               <p v-if="item.notes" class="mt-0.5 text-sm text-gray-500 line-clamp-1">{{ item.notes }}</p>
               <div class="mt-0.5 flex flex-wrap items-center gap-2 text-xs">
@@ -298,7 +298,7 @@
               </div>
             </div>
             <button
-              class="rounded px-2 py-1 text-xs text-red-500 opacity-0 group-hover:opacity-100 hover:bg-red-50 transition-all"
+              class="rounded px-2 py-1 text-xs text-red-500 opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:bg-red-50 transition-all"
               title="Trash"
               @click="trashItem(item.id)"
             >
@@ -572,10 +572,7 @@ function calendarColor(id: string | null): string | undefined {
 }
 
 function markDone(id: string) {
-  itemsStore.updateItem(id, {
-    status: 'done',
-    completedAt: new Date().toISOString(),
-  })
+  itemsStore.completeItem(id)
 }
 
 function trashItem(id: string) {
