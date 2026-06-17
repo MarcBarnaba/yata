@@ -255,6 +255,7 @@ function addItemToProject() {
     tags: [],
     projectId: projectId.value,
     parentId: null,
+    calendarId: null,
     dueDate: null,
     delegatedTo: null,
     waitingForDate: null,

@@ -23,6 +23,7 @@ export interface Item {
   tags: string[] // tag IDs
   projectId: string | null
   parentId: string | null // subtask: id of the parent item
+  calendarId: string | null // calendar set id
   dueDate: string | null // ISO date
   delegatedTo: string | null
   waitingForDate: string | null // ISO date
@@ -53,6 +54,12 @@ export interface Tag {
   name: string
 }
 
+export interface Calendar {
+  id: string
+  name: string
+  color: string // hex, e.g. #16a34a
+}
+
 export interface ReviewStats {
   inboxCount: number
   nextActionsCount: number
@@ -81,6 +88,7 @@ export interface ExportData {
   projects: Project[]
   contexts: Context[]
   tags: Tag[]
+  calendars: Calendar[]
   reviews: WeeklyReview[]
   settings: Settings
 }

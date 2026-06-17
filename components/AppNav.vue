@@ -24,6 +24,7 @@
     <div class="flex-1 overflow-y-auto py-2">
       <div class="px-2 space-y-0.5">
         <NavLink to="/" icon="dashboard" label="Dashboard" :collapsed="isCollapsed" />
+        <NavLink to="/today" icon="today" label="Today" :collapsed="isCollapsed" />
         <NavLink to="/inbox" icon="inbox" label="Inbox" :badge="inboxCount" :collapsed="isCollapsed" />
       </div>
 

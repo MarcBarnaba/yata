@@ -1,7 +1,7 @@
 <template>
   <NuxtLink
     :to="to"
-    class="relative flex items-center rounded-lg text-sm font-medium transition-colors min-h-[44px]"
+    class="relative flex items-center rounded-lg text-sm font-medium transition-colors min-h-[48px]"
     :class="[
       isActive
         ? 'bg-blue-50 text-blue-700'

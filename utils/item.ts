@@ -18,6 +18,7 @@ export function makeItem(partial: Partial<Item> & { title: string }): Item {
     tags: [],
     projectId: null,
     parentId: null,
+    calendarId: null,
     dueDate: null,
     delegatedTo: null,
     waitingForDate: null,

@@ -334,6 +334,10 @@
           />
         </div>
         <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Calendar</label>
+          <CalendarSelector v-model="selectedCalendar" />
+        </div>
+        <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Contexts</label>
           <ContextSelector v-model="selectedContexts" />
         </div>
@@ -434,6 +438,7 @@ const selectedEnergy = ref<EnergyLevel | null>(props.item.energy ?? null)
 const delegatedTo = ref('')
 const waitingForDate = ref('')
 const dueDate = ref('')
+const selectedCalendar = ref<string | null>(props.item.calendarId ?? null)
 const projectTitle = ref(props.item.title)
 const projectOutcome = ref('')
 const firstActionTitle = ref('')
@@ -506,6 +511,7 @@ function saveAsCalendar() {
   itemsStore.updateItem(props.item.id, {
     status: 'calendar',
     dueDate: dueDate.value || null,
+    calendarId: selectedCalendar.value,
     contexts: selectedContexts.value,
     tags: selectedTags.value,
     duration: selectedDuration.value,

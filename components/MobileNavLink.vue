@@ -1,7 +1,7 @@
 <template>
   <NuxtLink
     :to="to"
-    class="relative flex flex-col items-center justify-center gap-0.5 min-w-[64px] min-h-[56px] px-2 py-1 transition-colors"
+    class="relative flex flex-1 min-w-0 flex-col items-center justify-center gap-0.5 min-h-[60px] px-1 py-1 transition-colors"
     :class="isActive ? 'text-blue-600' : 'text-gray-500'"
   >
     <Icon :name="icon" size="lg" />

@@ -9,7 +9,7 @@
     </aside>
 
     <!-- Main content -->
-    <main class="flex-1 overflow-y-auto pb-16 md:pb-0">
+    <main class="flex-1 overflow-y-auto pb-32 md:pb-0">
       <div class="max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         <!-- Quick Capture — desktop only -->
         <div class="hidden md:block mb-6">
@@ -20,9 +20,13 @@
       </div>
     </main>
 
-    <!-- Mobile bottom nav -->
-    <div class="fixed bottom-0 inset-x-0 md:hidden bg-white z-40">
-      <MobileNav @open-menu="mobileMenuOpen = true" @open-capture="captureModalOpen = true" />
+    <!-- Mobile bottom nav (floating) -->
+    <div
+      class="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-3 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] md:hidden"
+    >
+      <div class="pointer-events-auto">
+        <MobileNav @open-menu="mobileMenuOpen = true" @open-capture="captureModalOpen = true" />
+      </div>
     </div>
 
     <!-- Mobile slide-out menu -->
@@ -37,8 +41,15 @@
       <Transition name="slide">
         <div
           v-if="mobileMenuOpen"
-          class="fixed inset-y-0 left-0 w-72 bg-white z-50 shadow-xl md:hidden"
+          class="fixed inset-y-0 left-0 z-50 flex w-[17rem] max-w-[85vw] flex-col bg-white shadow-xl md:hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
         >
+          <button
+            class="absolute right-3 top-[calc(env(safe-area-inset-top)+0.75rem)] z-10 rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+            aria-label="Close menu"
+            @click="mobileMenuOpen = false"
+          >
+            <Icon name="close" size="md" />
+          </button>
           <AppNav force-expanded />
         </div>
       </Transition>

@@ -45,6 +45,7 @@ export const useSyncStore = defineStore('sync', () => {
     const projects = useProjectsStore()
     const contexts = useContextsStore()
     const tags = useTagsStore()
+    const calendars = useCalendarsStore()
     const reviews = useReviewsStore()
     const settings = useSettingsStore()
     return {
@@ -52,6 +53,7 @@ export const useSyncStore = defineStore('sync', () => {
       projects: { get: () => projects.projects, set: (r) => projects.setProjects(mergeById(projects.projects, r)) },
       contexts: { get: () => contexts.contexts, set: (r) => contexts.setContexts(mergeById(contexts.contexts, r)) },
       tags: { get: () => tags.tags, set: (r) => tags.setTags(mergeById(tags.tags, r)) },
+      calendars: { get: () => calendars.calendars, set: (r) => calendars.setCalendars(mergeById(calendars.calendars, r)) },
       reviews: { get: () => reviews.reviews, set: (r) => reviews.setReviews(mergeById(reviews.reviews, r)) },
       // Settings is a single object — remote simply wins on pull.
       settings: { get: () => settings.settings, set: (r) => settings.setSettings(r) },

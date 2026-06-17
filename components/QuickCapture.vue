@@ -75,6 +75,7 @@ function capture() {
     tags: [],
     projectId: null,
     parentId: null,
+    calendarId: null,
     dueDate: null,
     delegatedTo: null,
     waitingForDate: null,

@@ -27,6 +27,30 @@
       </div>
     </div>
 
+    <!-- Calendar set filter -->
+    <div v-if="calendarsStore.calendars.length" class="mt-3 flex flex-wrap gap-2">
+      <button
+        type="button"
+        class="rounded-full px-3 py-1 text-sm font-medium transition-colors"
+        :class="selectedCalendar === null ? 'bg-gray-200 text-gray-800 ring-1 ring-gray-300' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'"
+        @click="selectedCalendar = null"
+      >
+        All
+      </button>
+      <button
+        v-for="cal in calendarsStore.calendars"
+        :key="cal.id"
+        type="button"
+        class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium transition-colors"
+        :class="selectedCalendar === cal.id ? 'text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+        :style="selectedCalendar === cal.id ? { backgroundColor: cal.color } : {}"
+        @click="selectedCalendar = cal.id"
+      >
+        <span class="h-2 w-2 rounded-full" :style="{ backgroundColor: selectedCalendar === cal.id ? '#ffffff' : cal.color }" />
+        {{ cal.name }}
+      </button>
+    </div>
+
     <!-- Navigation -->
     <div v-if="allCalendarItems.length || calendarView === 'month'" class="mt-4 flex items-center gap-3">
       <button
@@ -50,6 +74,13 @@
       <span class="text-sm text-gray-500">
         {{ calendarView === 'week' ? formatWeekRange(weekStart) : formatMonthYear(monthStart) }}
       </span>
+      <button
+        class="ml-auto flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50"
+        title="Export this month as .ics — open it to add to iOS Calendar"
+        @click="exportMonthIcs"
+      >
+        <Icon name="download" size="sm" /> .ics
+      </button>
     </div>
 
     <!-- Overdue items (shown in both views when viewing current period) -->
@@ -67,7 +98,9 @@
             <Icon name="check" size="sm" class="opacity-0 group-hover:opacity-100 text-green-600" />
           </button>
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-gray-900">{{ item.title }}</p>
+            <p class="text-sm font-medium text-gray-900">
+              <span v-if="item.calendarId" class="mr-1.5 inline-block h-2 w-2 rounded-full align-middle" :style="{ backgroundColor: calendarColor(item.calendarId) }" />{{ item.title }}
+            </p>
             <div class="mt-0.5 flex flex-wrap items-center gap-2 text-xs">
               <span class="text-red-600 font-medium">{{ formatDate(item.dueDate!) }}</span>
               <NuxtLink
@@ -118,7 +151,9 @@
                 <Icon name="check" size="sm" class="opacity-0 group-hover:opacity-100 text-green-600" />
               </button>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-gray-900">{{ item.title }}</p>
+                <p class="text-sm font-medium text-gray-900">
+                  <span v-if="item.calendarId" class="mr-1.5 inline-block h-2 w-2 rounded-full align-middle" :style="{ backgroundColor: calendarColor(item.calendarId) }" />{{ item.title }}
+                </p>
                 <p v-if="item.notes" class="mt-0.5 text-sm text-gray-500 line-clamp-1">{{ item.notes }}</p>
                 <div class="mt-0.5 flex flex-wrap items-center gap-2 text-xs">
                   <NuxtLink
@@ -241,7 +276,9 @@
               <Icon name="check" size="sm" class="opacity-0 group-hover:opacity-100 text-green-600" />
             </button>
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-gray-900">{{ item.title }}</p>
+              <p class="text-sm font-medium text-gray-900">
+                <span v-if="item.calendarId" class="mr-1.5 inline-block h-2 w-2 rounded-full align-middle" :style="{ backgroundColor: calendarColor(item.calendarId) }" />{{ item.title }}
+              </p>
               <p v-if="item.notes" class="mt-0.5 text-sm text-gray-500 line-clamp-1">{{ item.notes }}</p>
               <div class="mt-0.5 flex flex-wrap items-center gap-2 text-xs">
                 <NuxtLink
@@ -288,19 +325,23 @@
 
 <script setup lang="ts">
 import type { Item } from '~/types'
+import { itemsToICS, downloadICS } from '~/utils/ics'
 
 const itemsStore = useItemsStore()
 const projectsStore = useProjectsStore()
 const contextsStore = useContextsStore()
+const calendarsStore = useCalendarsStore()
 const settingsStore = useSettingsStore()
 
 const calendarView = computed(() => settingsStore.calendarView)
 
 // All calendar items (status: 'calendar' with a dueDate), sorted chronologically
 const allCalendarItems = computed(() => {
-  return itemsStore.calendar
-    .filter((i) => i.dueDate)
-    .sort((a, b) => a.dueDate!.localeCompare(b.dueDate!))
+  let list = itemsStore.calendar.filter((i) => i.dueDate)
+  if (selectedCalendar.value) {
+    list = list.filter((i) => i.calendarId === selectedCalendar.value)
+  }
+  return list.sort((a, b) => a.dueDate!.localeCompare(b.dueDate!))
 })
 
 // Week navigation
@@ -309,6 +350,8 @@ const weekOffset = ref(0)
 const monthOffset = ref(0)
 // Selected date for month view
 const selectedDate = ref<string | null>(null)
+// Selected calendar set filter (null = all sets)
+const selectedCalendar = ref<string | null>(null)
 
 const today = computed(() => {
   const d = new Date()
@@ -524,6 +567,10 @@ function getContextName(ctxId: string): string {
   return ctx ? ctx.name : ctxId
 }
 
+function calendarColor(id: string | null): string | undefined {
+  return id ? calendarsStore.getById(id)?.color : undefined
+}
+
 function markDone(id: string) {
   itemsStore.updateItem(id, {
     status: 'done',
@@ -533,6 +580,27 @@ function markDone(id: string) {
 
 function trashItem(id: string) {
   itemsStore.trashItem(id)
+}
+
+// Dated items within the month currently in focus (respects the set filter).
+const monthExportItems = computed(() => {
+  const y = monthStart.value.getFullYear()
+  const m = monthStart.value.getMonth()
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const start = `${y}-${pad(m + 1)}-01`
+  const lastDay = new Date(y, m + 1, 0).getDate()
+  const end = `${y}-${pad(m + 1)}-${pad(lastDay)}`
+  return allCalendarItems.value.filter((i) => i.dueDate! >= start && i.dueDate! <= end)
+})
+
+function exportMonthIcs() {
+  const setName = selectedCalendar.value
+    ? calendarsStore.getById(selectedCalendar.value)?.name ?? 'GSD'
+    : 'All'
+  const y = monthStart.value.getFullYear()
+  const monthKey = `${y}-${String(monthStart.value.getMonth() + 1).padStart(2, '0')}`
+  const ics = itemsToICS(monthExportItems.value, `GSD — ${setName} (${formatMonthYear(monthStart.value)})`)
+  downloadICS(`gsd-${setName.toLowerCase().replace(/\s+/g, '-')}-${monthKey}.ics`, ics)
 }
 
 // Reset view state when switching views

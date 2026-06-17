@@ -217,6 +217,85 @@
       </p>
     </section>
 
+    <!-- Calendars Management -->
+    <section class="mt-8">
+      <h2 class="text-lg font-semibold text-gray-800">Calendars</h2>
+      <p class="mt-1 text-sm text-gray-500">
+        Calendar sets group your dated items (e.g. Agricoltura, Burocrazia, Scadenze).
+      </p>
+
+      <!-- Add calendar -->
+      <form class="mt-4 space-y-2" @submit.prevent="addCalendar">
+        <div class="flex gap-2">
+          <input
+            v-model="newCalendarName"
+            type="text"
+            placeholder="e.g. Agricoltura"
+            class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            :disabled="!newCalendarName.trim()"
+            class="rounded-lg px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+            :style="{ backgroundColor: newCalendarColor }"
+          >
+            Add
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button
+            v-for="color in CALENDAR_COLORS"
+            :key="color"
+            type="button"
+            class="h-7 w-7 rounded-full transition-transform"
+            :class="newCalendarColor === color ? 'scale-110 ring-2 ring-gray-400 ring-offset-2' : ''"
+            :style="{ backgroundColor: color }"
+            @click="newCalendarColor = color"
+          />
+        </div>
+      </form>
+
+      <!-- Calendar list -->
+      <ul class="mt-4 divide-y divide-gray-100">
+        <li v-for="cal in calendarsStore.calendars" :key="cal.id" class="flex items-center gap-3 py-3">
+          <template v-if="editingCalId === cal.id">
+            <input
+              v-model="editCalName"
+              type="text"
+              class="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              @keyup.enter="saveCalEdit(cal.id)"
+              @keyup.escape="editingCalId = null"
+            />
+            <button class="rounded px-2 py-1 text-sm text-blue-600 hover:bg-blue-50" @click="saveCalEdit(cal.id)">
+              Save
+            </button>
+            <button class="rounded px-2 py-1 text-sm text-gray-500 hover:bg-gray-100" @click="editingCalId = null">
+              Cancel
+            </button>
+          </template>
+          <template v-else>
+            <span class="h-3 w-3 flex-shrink-0 rounded-full" :style="{ backgroundColor: cal.color }" />
+            <span class="flex-1 text-sm text-gray-800">{{ cal.name }}</span>
+            <button
+              class="rounded px-2 py-1 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              @click="startCalEdit(cal)"
+            >
+              Edit
+            </button>
+            <button
+              class="rounded px-2 py-1 text-sm text-red-500 hover:bg-red-50 hover:text-red-700"
+              @click="calendarsStore.removeCalendar(cal.id)"
+            >
+              Delete
+            </button>
+          </template>
+        </li>
+      </ul>
+      <p v-if="calendarsStore.calendars.length === 0" class="mt-4 text-sm text-gray-400">
+        No calendars defined.
+      </p>
+    </section>
+
     <!-- Keyboard Shortcuts -->
     <section class="mt-8">
       <h2 class="text-lg font-semibold text-gray-800">Keyboard Shortcuts</h2>
@@ -383,11 +462,12 @@
 </template>
 
 <script setup lang="ts">
-import type { Context, Tag, ExportData } from '~/types'
+import type { Context, Tag, Calendar, ExportData } from '~/types'
 import { KEYBOARD_SHORTCUTS } from '~/composables/useKeyboardShortcuts'
 
 const contextsStore = useContextsStore()
 const tagsStore = useTagsStore()
+const calendarsStore = useCalendarsStore()
 const itemsStore = useItemsStore()
 const projectsStore = useProjectsStore()
 const reviewsStore = useReviewsStore()
@@ -507,6 +587,36 @@ function executeDeleteTag() {
   deletingTag.value = null
 }
 
+// --- Calendar (set) management ---
+const CALENDAR_COLORS = ['#16a34a', '#d97706', '#dc2626', '#2563eb', '#7c3aed', '#0d9488', '#db2777', '#4b5563']
+const newCalendarName = ref('')
+const newCalendarColor = ref(CALENDAR_COLORS[0])
+const editingCalId = ref<string | null>(null)
+const editCalName = ref('')
+
+function addCalendar() {
+  const name = newCalendarName.value.trim()
+  if (!name) return
+  calendarsStore.addCalendar({
+    id: 'cal-' + crypto.randomUUID().slice(0, 8),
+    name,
+    color: newCalendarColor.value,
+  })
+  newCalendarName.value = ''
+}
+
+function startCalEdit(cal: Calendar) {
+  editingCalId.value = cal.id
+  editCalName.value = cal.name
+}
+
+function saveCalEdit(id: string) {
+  const name = editCalName.value.trim()
+  if (!name) return
+  calendarsStore.updateCalendar(id, { name })
+  editingCalId.value = null
+}
+
 // --- Export / Import ---
 const fileInput = ref<HTMLInputElement | null>(null)
 const importMessage = ref('')
@@ -522,6 +632,7 @@ function exportData() {
     projects: projectsStore.projects,
     contexts: contextsStore.contexts,
     tags: tagsStore.tags,
+    calendars: calendarsStore.calendars,
     reviews: reviewsStore.reviews,
     settings: settingsStore.settings,
   }
@@ -591,6 +702,7 @@ function executeImport() {
     projectsStore.setProjects(data.projects)
     contextsStore.setContexts(data.contexts)
     if (data.tags) tagsStore.setTags(data.tags)
+    if (data.calendars) calendarsStore.setCalendars(data.calendars)
     reviewsStore.setReviews(data.reviews)
     if (data.settings) settingsStore.setSettings(data.settings)
   } else {
@@ -614,6 +726,13 @@ function executeImport() {
       const existingTagIds = new Set(tagsStore.tags.map((t) => t.id))
       for (const tag of data.tags) {
         if (!existingTagIds.has(tag.id)) tagsStore.addTag(tag)
+      }
+    }
+
+    if (data.calendars) {
+      const existingCalIds = new Set(calendarsStore.calendars.map((c) => c.id))
+      for (const cal of data.calendars) {
+        if (!existingCalIds.has(cal.id)) calendarsStore.addCalendar(cal)
       }
     }
 
